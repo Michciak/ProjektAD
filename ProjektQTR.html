@@ -1,0 +1,1814 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.1.189">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Michał Koziński">
+<meta name="dcterms.date" content="2022-12-01">
+
+<title>Analiza sprzedaży gier komputerowych 1980-2016</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<script src="ProjektQTR_files/libs/clipboard/clipboard.min.js"></script>
+<script src="ProjektQTR_files/libs/quarto-html/quarto.js"></script>
+<script src="ProjektQTR_files/libs/quarto-html/popper.min.js"></script>
+<script src="ProjektQTR_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="ProjektQTR_files/libs/quarto-html/anchor.min.js"></script>
+<link href="ProjektQTR_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="ProjektQTR_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="ProjektQTR_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="ProjektQTR_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="ProjektQTR_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+
+<script src="ProjektQTR_files/libs/kePrint-0.0.1/kePrint.js"></script>
+<link href="ProjektQTR_files/libs/lightable-0.0.1/lightable.css" rel="stylesheet">
+
+
+</head>
+
+<body>
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-full">
+<div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+  <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#przedstawienie-zbioru-danych" id="toc-przedstawienie-zbioru-danych" class="nav-link active" data-scroll-target="#przedstawienie-zbioru-danych">Przedstawienie zbioru danych</a>
+  <ul class="collapse">
+  <li><a href="#źródło-danych" id="toc-źródło-danych" class="nav-link" data-scroll-target="#źródło-danych">Źródło danych</a></li>
+  <li><a href="#zawartość-zbioru" id="toc-zawartość-zbioru" class="nav-link" data-scroll-target="#zawartość-zbioru">Zawartość zbioru</a></li>
+  <li><a href="#przedstawienie-zmiennych" id="toc-przedstawienie-zmiennych" class="nav-link" data-scroll-target="#przedstawienie-zmiennych">Przedstawienie zmiennych</a></li>
+  </ul></li>
+  <li><a href="#cele-badawcze" id="toc-cele-badawcze" class="nav-link" data-scroll-target="#cele-badawcze">Cele badawcze</a></li>
+  <li><a href="#przygotowanie-zbioru" id="toc-przygotowanie-zbioru" class="nav-link" data-scroll-target="#przygotowanie-zbioru">Przygotowanie zbioru</a>
+  <ul class="collapse">
+  <li><a href="#wczytanie-danych" id="toc-wczytanie-danych" class="nav-link" data-scroll-target="#wczytanie-danych">Wczytanie danych</a></li>
+  <li><a href="#czyszczenie-danych" id="toc-czyszczenie-danych" class="nav-link" data-scroll-target="#czyszczenie-danych">Czyszczenie danych</a></li>
+  <li><a href="#obsługa-braków-danych" id="toc-obsługa-braków-danych" class="nav-link" data-scroll-target="#obsługa-braków-danych">Obsługa braków danych</a></li>
+  </ul></li>
+  <li><a href="#opis-zbioru" id="toc-opis-zbioru" class="nav-link" data-scroll-target="#opis-zbioru">Opis zbioru</a>
+  <ul class="collapse">
+  <li><a href="#podstawowe-statystki-opisowe" id="toc-podstawowe-statystki-opisowe" class="nav-link" data-scroll-target="#podstawowe-statystki-opisowe">Podstawowe statystki opisowe</a></li>
+  <li><a href="#dane-kategoryczne" id="toc-dane-kategoryczne" class="nav-link" data-scroll-target="#dane-kategoryczne">Dane kategoryczne</a></li>
+  </ul></li>
+  <li><a href="#model-predykcyjny---las-losowy" id="toc-model-predykcyjny---las-losowy" class="nav-link" data-scroll-target="#model-predykcyjny---las-losowy">Model predykcyjny - LaS lOsOwY</a></li>
+  </ul>
+</nav>
+</div>
+<main class="content column-page-left" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Analiza sprzedaży gier komputerowych 1980-2016</h1>
+<p class="subtitle lead">Projekt z Analizy Danych</p>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Michał Koziński </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">December 1, 2022</p>
+    </div>
+  </div>
+    
+  </div>
+  
+
+</header>
+
+<style type="text/css">
+.main-container {
+  max-width: 2100px;
+  margin-left: auto;
+  margin-right: auto;
+}
+</style>
+<section id="przedstawienie-zbioru-danych" class="level1">
+<h1>Przedstawienie zbioru danych</h1>
+<section id="źródło-danych" class="level3">
+<h3 class="anchored" data-anchor-id="źródło-danych">Źródło danych</h3>
+<p>Zbiór danych pochodzi ze stronny <em>Kaggle</em>:</p>
+<p><a href="https://www.kaggle.com/datasets/arslanali4343/sales-of-video-games" class="uri">https://www.kaggle.com/datasets/arslanali4343/sales-of-video-games</a>.</p>
+</section>
+<section id="zawartość-zbioru" class="level3">
+<h3 class="anchored" data-anchor-id="zawartość-zbioru">Zawartość zbioru</h3>
+<p>Zbiór danych jest zestawieniem wyników sprzedażowych gier video z lat 1980 - 2020. Uwzględnione zostały w nim tylko tytuły, które sprzedały się w liczbie większej niż 100 000 kopii. Zbiór uwzględnia wyniki sprzedażowe w Ameryce Północnej, Europie i Japonii.</p>
+<p><br></p>
+</section>
+<section id="przedstawienie-zmiennych" class="level3">
+<h3 class="anchored" data-anchor-id="przedstawienie-zmiennych">Przedstawienie zmiennych</h3>
+<p>Zmienne zawarte w zbiorze:</p>
+<ul>
+<li><p><code>Rank</code> - Ranking ogólnej sprzedaży</p></li>
+<li><p><code>Name</code> - Nazwa gry</p></li>
+<li><p><code>Platform</code> - Platforma wydania gry (np. PS3, SNES, PC etc.)</p></li>
+<li><p><code>Year</code> - Rok publikacji gry</p></li>
+<li><p><code>Genre</code> - Gatunek gry</p></li>
+<li><p><code>Publisher</code> - Wydawca gry</p></li>
+<li><p><code>NA_Sales</code> - Liczba sprzedanych kopii w Ameryce Północnej (w milionach)</p></li>
+<li><p><code>EU_Sales</code> - Liczba sprzedanych kopii w Europie (w milionach)</p></li>
+<li><p><code>JP_Sales</code> - Liczba sprzedanych kopii w Japonii (w milionach)</p></li>
+<li><p><code>Other_Sales</code> - Liczba sprzedanych kopii w pozostałych regionach (w milionach)</p></li>
+<li><p><code>Global_Sales</code> - Łączna liczba sprzedanych kopii na całym świecie (w milionach)</p></li>
+</ul>
+<p><br></p>
+<hr>
+</section>
+</section>
+<section id="cele-badawcze" class="level1">
+<h1>Cele badawcze</h1>
+<p>Opis zbioru danych, przedstawienie korelacji między zawartymi w nim zmiennymi, budowa modelu predykcyjnego.</p>
+<p><br></p>
+<hr>
+</section>
+<section id="przygotowanie-zbioru" class="level1">
+<h1>Przygotowanie zbioru</h1>
+<p><br></p>
+<section id="wczytanie-danych" class="level3">
+<h3 class="anchored" data-anchor-id="wczytanie-danych">Wczytanie danych</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>game_sales <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"C:/Users/Michc/Dropbox/Uczelnia/Semestr 5/Projekt z analizy danych/Projekt/dane/video_games.csv"</span>,<span class="at">na.strings =</span> <span class="st">"N/A"</span>) <span class="co">#spoko ale do analizy, nie do modelu</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><br></p>
+</section>
+<section id="czyszczenie-danych" class="level3">
+<h3 class="anchored" data-anchor-id="czyszczenie-danych">Czyszczenie danych</h3>
+<p><br></p>
+<section id="zmiana-typu-danych-z-char-na-factor" class="level4">
+<h4 class="anchored" data-anchor-id="zmiana-typu-danych-z-char-na-factor">Zmiana typu danych z <em>char</em> na <em>factor</em></h4>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>game_sales<span class="sc">$</span>Name <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(game_sales<span class="sc">$</span>Name)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>game_sales<span class="sc">$</span>Platform <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(game_sales<span class="sc">$</span>Platform)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>game_sales<span class="sc">$</span>Genre <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(game_sales<span class="sc">$</span>Genre)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>game_sales<span class="sc">$</span>Publisher <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(game_sales<span class="sc">$</span>Publisher)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><br></p>
+</section>
+<section id="zamiana-roku-produkcji-z-char-na-numeric" class="level4">
+<h4 class="anchored" data-anchor-id="zamiana-roku-produkcji-z-char-na-numeric">Zamiana roku produkcji z <em>char</em> na <em>numeric</em></h4>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>game_sales<span class="sc">$</span>Year <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(game_sales<span class="sc">$</span>Year)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><br></p>
+<p><br></p>
+</section>
+</section>
+<section id="obsługa-braków-danych" class="level3">
+<h3 class="anchored" data-anchor-id="obsługa-braków-danych">Obsługa braków danych</h3>
+<p><br></p>
+<section id="zmiana-unknown-na-na" class="level4">
+<h4 class="anchored" data-anchor-id="zmiana-unknown-na-na">Zmiana <em>“unknown”</em> na <em>NA</em></h4>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>game_sales[<span class="fu">which</span>(game_sales<span class="sc">$</span>Publisher<span class="sc">==</span><span class="st">"Unknown"</span>),<span class="dv">6</span>] <span class="ot">&lt;-</span> <span class="cn">NA</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><br></p>
+</section>
+<section id="lokalizowanie-braków" class="level4">
+<h4 class="anchored" data-anchor-id="lokalizowanie-braków">Lokalizowanie braków</h4>
+<!-- <span style='font-size:20px'>Zestawienie braków danych z podziałem na zmienne</span> -->
+<div class="cell">
+<div class="cell-output-display">
+
+<table style="color: black; float: left; margin-right: 10px;" class="table">
+<caption><span style="font-size:30px">Zestawienie braków danych z podziałem na zmienne</span></caption>
+ <thead>
+  <tr>
+   <th style="text-align:right;"> Rank </th>
+   <th style="text-align:right;"> Name </th>
+   <th style="text-align:right;"> Platform </th>
+   <th style="text-align:right;"> Year </th>
+   <th style="text-align:right;"> Genre </th>
+   <th style="text-align:right;"> Publisher </th>
+   <th style="text-align:right;"> NA_Sales </th>
+   <th style="text-align:right;"> EU_Sales </th>
+   <th style="text-align:right;"> JP_Sales </th>
+   <th style="text-align:right;"> Other_sales </th>
+   <th style="text-align:right;"> Global_Sales </th>
+   <th style="text-align:left;"> Year &amp; Publisher </th>
+  </tr>
+ </thead>
+<tbody>
+  <tr>
+   <td style="text-align:right;color: #1E90FF !important;"> 0 </td>
+   <td style="text-align:right;color: #1E90FF !important;"> 0 </td>
+   <td style="text-align:right;color: #1E90FF !important;"> 0 </td>
+   <td style="text-align:right;color: #FF3030 !important;"> 271 </td>
+   <td style="text-align:right;color: #1E90FF !important;"> 0 </td>
+   <td style="text-align:right;color: #FF3030 !important;"> 261 </td>
+   <td style="text-align:right;color: #1E90FF !important;"> 0 </td>
+   <td style="text-align:right;color: #1E90FF !important;"> 0 </td>
+   <td style="text-align:right;color: #1E90FF !important;"> 0 </td>
+   <td style="text-align:right;color: #1E90FF !important;"> 0 </td>
+   <td style="text-align:right;color: #1E90FF !important;"> 0 </td>
+   <td style="text-align:left;color: orange !important;"> 125 </td>
+  </tr>
+</tbody>
+</table>
+
+</div>
+</div>
+<p><br></p>
+<p><br></p>
+<hr>
+</section>
+</section>
+</section>
+<section id="opis-zbioru" class="level1">
+<h1>Opis zbioru</h1>
+<p><br></p>
+<section id="podstawowe-statystki-opisowe" class="level3">
+<h3 class="anchored" data-anchor-id="podstawowe-statystki-opisowe">Podstawowe statystki opisowe</h3>
+<!-- min, średnia, kwantyle (w tym mediana), max, sd -->
+<p><br></p>
+<div class="cell">
+<div class="cell-output-display">
+
+<table class="table" style="margin-left: auto; margin-right: auto;">
+ <thead>
+  <tr>
+   <th style="text-align:left;">   </th>
+   <th style="text-align:right;"> Year </th>
+   <th style="text-align:right;"> EU_Sales* </th>
+   <th style="text-align:right;"> NA_Sales* </th>
+   <th style="text-align:right;"> JP_Sales* </th>
+   <th style="text-align:right;"> Other_Sales* </th>
+   <th style="text-align:right;"> Global_Sales* </th>
+  </tr>
+ </thead>
+<tbody>
+  <tr>
+   <td style="text-align:left;"> Minimum </td>
+   <td style="text-align:right;"> 1980 </td>
+   <td style="text-align:right;"> 0.00 </td>
+   <td style="text-align:right;"> 0.00 </td>
+   <td style="text-align:right;"> 0.00 </td>
+   <td style="text-align:right;"> 0.00 </td>
+   <td style="text-align:right;"> 0.01 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Q1 </td>
+   <td style="text-align:right;"> 2003 </td>
+   <td style="text-align:right;"> 0.00 </td>
+   <td style="text-align:right;"> 0.00 </td>
+   <td style="text-align:right;"> 0.00 </td>
+   <td style="text-align:right;"> 0.00 </td>
+   <td style="text-align:right;"> 0.06 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Mediana </td>
+   <td style="text-align:right;"> 2007 </td>
+   <td style="text-align:right;"> 0.02 </td>
+   <td style="text-align:right;"> 0.08 </td>
+   <td style="text-align:right;"> 0.00 </td>
+   <td style="text-align:right;"> 0.01 </td>
+   <td style="text-align:right;"> 0.17 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Średnia </td>
+   <td style="text-align:right;"> 2006 </td>
+   <td style="text-align:right;"> 0.15 </td>
+   <td style="text-align:right;"> 0.26 </td>
+   <td style="text-align:right;"> 0.08 </td>
+   <td style="text-align:right;"> 0.05 </td>
+   <td style="text-align:right;"> 0.54 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Q3 </td>
+   <td style="text-align:right;"> 2010 </td>
+   <td style="text-align:right;"> 0.11 </td>
+   <td style="text-align:right;"> 0.24 </td>
+   <td style="text-align:right;"> 0.04 </td>
+   <td style="text-align:right;"> 0.04 </td>
+   <td style="text-align:right;"> 0.47 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Maksimum </td>
+   <td style="text-align:right;"> 2020 </td>
+   <td style="text-align:right;"> 29.02 </td>
+   <td style="text-align:right;"> 41.49 </td>
+   <td style="text-align:right;"> 10.22 </td>
+   <td style="text-align:right;"> 10.57 </td>
+   <td style="text-align:right;"> 82.74 </td>
+  </tr>
+</tbody>
+<tfoot>
+<tr>
+<td style="padding: 0; border:0;" colspan="100%"><sup></sup> * liczba sztuk w milionach</td>
+</tr>
+</tfoot>
+</table>
+
+</div>
+</div>
+<p><br></p>
+<div class="cell">
+<div class="cell-output-display">
+<p><img src="ProjektQTR_files/figure-html/wykres%20publikacji-1.png" class="img-fluid" width="2016"></p>
+</div>
+</div>
+<p><br></p>
+</section>
+<section id="dane-kategoryczne" class="level3">
+<h3 class="anchored" data-anchor-id="dane-kategoryczne">Dane kategoryczne</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>Global_Sales_Publisher <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="fu">aggregate</span>(game_sales<span class="sc">$</span>Global_Sales, <span class="at">by=</span><span class="fu">list</span>(<span class="at">Category=</span>game_sales<span class="sc">$</span>Publisher), <span class="at">FUN =</span> sum)) <span class="sc">%&gt;%</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">`</span><span class="at">colnames&lt;-</span><span class="st">`</span>(<span class="fu">c</span>(<span class="st">"Publisher"</span>,<span class="st">"Global_Sales"</span>))</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Global_Sales_Publisher %&gt;%</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="co">#   d3r::d3_nest(value_cols = "Global_Sales") %&gt;%</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="co">#   sunburstR::sunburst(width="100%", height=400)</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>game_sales <span class="sc">%&gt;%</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="fu">filter</span>(Name<span class="sc">==</span><span class="st">"Gal*gun 2"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> [1] Rank         Name         Platform     Year         Genre       
+ [6] Publisher    NA_Sales     EU_Sales     JP_Sales     Other_Sales 
+[11] Global_Sales
+&lt;0 wierszy&gt; (lub 'row.names' o zerowej długości)</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(Global_Sales_Publisher[<span class="fu">order</span>(Global_Sales_Publisher<span class="sc">$</span>Global_Sales, <span class="at">decreasing=</span>T),],<span class="dv">15</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                                 Publisher Global_Sales
+368                               Nintendo      1786.56
+139                        Electronic Arts      1110.32
+17                              Activision       727.46
+464            Sony Computer Entertainment       607.50
+532                                Ubisoft       474.72
+498                   Take-Two Interactive       399.54
+514                                    THQ       340.77
+282           Konami Digital Entertainment       283.64
+452                                   Sega       272.99
+351                     Namco Bandai Games       254.09
+328                 Microsoft Game Studios       245.79
+82                                  Capcom       200.89
+54                                   Atari       157.22
+558 Warner Bros. Interactive Entertainment       153.89
+474                            Square Enix       145.18</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="model-predykcyjny---las-losowy" class="level1">
+<h1>Model predykcyjny - LaS lOsOwY</h1>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">14102</span>)</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>index <span class="ot">&lt;-</span> <span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(game_sales), (<span class="dv">7</span><span class="sc">/</span><span class="dv">10</span><span class="sc">*</span><span class="fu">nrow</span>(game_sales)))</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>model <span class="ot">&lt;-</span> game_sales[index,] <span class="sc">%&gt;%</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>  rpart<span class="sc">::</span><span class="fu">rpart</span>(Global_Sales<span class="sc">~</span>Genre<span class="sc">+</span>Publisher<span class="sc">+</span>Platform,.)</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>pred <span class="ot">&lt;-</span> <span class="fu">predict</span>(model, <span class="at">newdata =</span> game_sales[<span class="sc">-</span>index,])</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a><span class="co">#cbind(pred, game_sales[-index,"Global_Sales"])</span></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a><span class="fu">abs</span>(<span class="fu">mean</span>(pred<span class="sc">-</span>game_sales[<span class="sc">-</span>index,<span class="st">"Global_Sales"</span>]))<span class="sc">*</span><span class="dv">100000</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 1364.839</code></pre>
+</div>
+</div>
+<!-- ```{r} -->
+<!-- model2 <- game_sales[index,] %>% -->
+<!--   rpart::rpart(Global_Sales~Genre+Publisher+Platform+Year,.) -->
+<!-- pred2 <- predict(model2, newdata = game_sales[-index,]) -->
+<!-- #cbind(pred2, game_sales[-index,"Global_Sales"]) -->
+<!-- abs(mean(pred2-game_sales[-index,"Global_Sales"]))*100000 -->
+<!-- ``` -->
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>g_s <span class="ot">&lt;-</span> <span class="fu">na.omit</span>(game_sales)</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>index <span class="ot">&lt;-</span> <span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(g_s), (<span class="dv">7</span><span class="sc">/</span><span class="dv">10</span><span class="sc">*</span><span class="fu">nrow</span>(g_s)))</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="co"># las &lt;- randomForest::randomForest(Global_Sales~Genre+Publisher+Platform</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a><span class="co">#                            ,data=g_s[index,]</span></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a><span class="co">#                            ,xtest=g_s[-index,c('Genre','Publisher','Platform')]</span></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a><span class="co">#                            ,ytest=g_s[-index,'Game_Sales'])</span></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a><span class="fu">levels</span>(game_sales<span class="sc">$</span>Publisher) <span class="co">#578</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  [1] "10TACLE Studios"                       
+  [2] "1C Company"                            
+  [3] "20th Century Fox Video Games"          
+  [4] "2D Boy"                                
+  [5] "3DO"                                   
+  [6] "49Games"                               
+  [7] "505 Games"                             
+  [8] "5pb"                                   
+  [9] "7G//AMES"                              
+ [10] "989 Sports"                            
+ [11] "989 Studios"                           
+ [12] "Abylight"                              
+ [13] "Acclaim Entertainment"                 
+ [14] "Accolade"                              
+ [15] "Ackkstudios"                           
+ [16] "Acquire"                               
+ [17] "Activision"                            
+ [18] "Activision Blizzard"                   
+ [19] "Activision Value"                      
+ [20] "Adeline Software"                      
+ [21] "Aerosoft"                              
+ [22] "Agatsuma Entertainment"                
+ [23] "Agetec"                                
+ [24] "Aksys Games"                           
+ [25] "Alawar Entertainment"                  
+ [26] "Alchemist"                             
+ [27] "Alternative Software"                  
+ [28] "Altron"                                
+ [29] "Alvion"                                
+ [30] "American Softworks"                    
+ [31] "Angel Studios"                         
+ [32] "Answer Software"                       
+ [33] "AQ Interactive"                        
+ [34] "Aqua Plus"                             
+ [35] "Aques"                                 
+ [36] "Arc System Works"                      
+ [37] "Arena Entertainment"                   
+ [38] "Aria"                                  
+ [39] "Arika"                                 
+ [40] "ArtDink"                               
+ [41] "Aruze Corp"                            
+ [42] "ASC Games"                             
+ [43] "Ascaron Entertainment"                 
+ [44] "Ascaron Entertainment GmbH"            
+ [45] "ASCII Entertainment"                   
+ [46] "ASCII Media Works"                     
+ [47] "Asgard"                                
+ [48] "ASK"                                   
+ [49] "Asmik Ace Entertainment"               
+ [50] "Asmik Corp"                            
+ [51] "Aspyr"                                 
+ [52] "Astragon"                              
+ [53] "Asylum Entertainment"                  
+ [54] "Atari"                                 
+ [55] "Athena"                                
+ [56] "Atlus"                                 
+ [57] "Avalon Interactive"                    
+ [58] "Avanquest"                             
+ [59] "Avanquest Software"                    
+ [60] "Axela"                                 
+ [61] "BAM! Entertainment"                    
+ [62] "Banpresto"                             
+ [63] "Benesse"                               
+ [64] "Berkeley"                              
+ [65] "Bethesda Softworks"                    
+ [66] "Big Ben Interactive"                   
+ [67] "Big Fish Games"                        
+ [68] "Bigben Interactive"                    
+ [69] "bitComposer Games"                     
+ [70] "Black Bean Games"                      
+ [71] "Black Label Games"                     
+ [72] "Blast! Entertainment Ltd"              
+ [73] "Blue Byte"                             
+ [74] "BMG Interactive Entertainment"         
+ [75] "Bohemia Interactive"                   
+ [76] "Bomb"                                  
+ [77] "Boost On"                              
+ [78] "BPS"                                   
+ [79] "Brash Entertainment"                   
+ [80] "Broccoli"                              
+ [81] "BushiRoad"                             
+ [82] "Capcom"                                
+ [83] "Cave"                                  
+ [84] "CBS Electronics"                       
+ [85] "CCP"                                   
+ [86] "CDV Software Entertainment"            
+ [87] "ChunSoft"                              
+ [88] "City Interactive"                      
+ [89] "Cloud Imperium Games Corporation"      
+ [90] "Coconuts Japan"                        
+ [91] "Codemasters"                           
+ [92] "Codemasters Online"                    
+ [93] "CokeM Interactive"                     
+ [94] "Coleco"                                
+ [95] "Comfort"                               
+ [96] "Commseed"                              
+ [97] "Compile"                               
+ [98] "Compile Heart"                         
+ [99] "Conspiracy Entertainment"              
+[100] "Core Design Ltd."                      
+[101] "CPG Products"                          
+[102] "Crave Entertainment"                   
+[103] "Creative Core"                         
+[104] "Crimson Cow"                           
+[105] "Crystal Dynamics"                      
+[106] "CTO SpA"                               
+[107] "Culture Brain"                         
+[108] "Culture Publishers"                    
+[109] "CyberFront"                            
+[110] "Cygames"                               
+[111] "D3Publisher"                           
+[112] "Daedalic"                              
+[113] "Daedalic Entertainment"                
+[114] "Daito"                                 
+[115] "Data Age"                              
+[116] "Data Design Interactive"               
+[117] "Data East"                             
+[118] "Datam Polystar"                        
+[119] "Deep Silver"                           
+[120] "Destination Software, Inc"             
+[121] "Destineer"                             
+[122] "Detn8 Games"                           
+[123] "Devolver Digital"                      
+[124] "DHM Interactive"                       
+[125] "DigiCube"                              
+[126] "Disney Interactive Studios"            
+[127] "Dorart"                                
+[128] "dramatic create"                       
+[129] "DreamCatcher Interactive"              
+[130] "DreamWorks Interactive"                
+[131] "DSI Games"                             
+[132] "DTP Entertainment"                     
+[133] "Dusenberry Martin Racing"              
+[134] "EA Games"                              
+[135] "Easy Interactive"                      
+[136] "Ecole"                                 
+[137] "Edia"                                  
+[138] "Eidos Interactive"                     
+[139] "Electronic Arts"                       
+[140] "Electronic Arts Victor"                
+[141] "Elf"                                   
+[142] "Elite"                                 
+[143] "Empire Interactive"                    
+[144] "Encore"                                
+[145] "Enix Corporation"                      
+[146] "Enjoy Gaming ltd."                     
+[147] "Enterbrain"                            
+[148] "EON Digital Entertainment"             
+[149] "Epic Games"                            
+[150] "Epoch"                                 
+[151] "Ertain"                                
+[152] "ESP"                                   
+[153] "Essential Games"                       
+[154] "Evolution Games"                       
+[155] "Evolved Games"                         
+[156] "Excalibur Publishing"                  
+[157] "Experience Inc."                       
+[158] "Extreme Entertainment Group"           
+[159] "Falcom Corporation"                    
+[160] "Fields"                                
+[161] "Flashpoint Games"                      
+[162] "Flight-Plan"                           
+[163] "Focus Home Interactive"                
+[164] "Focus Multimedia"                      
+[165] "fonfun"                                
+[166] "Foreign Media Games"                   
+[167] "Fortyfive"                             
+[168] "Fox Interactive"                       
+[169] "From Software"                         
+[170] "Fuji"                                  
+[171] "Funbox Media"                          
+[172] "Funcom"                                
+[173] "FunSoft"                               
+[174] "Funsta"                                
+[175] "FuRyu"                                 
+[176] "FuRyu Corporation"                     
+[177] "G.Rev"                                 
+[178] "Gaga"                                  
+[179] "Gainax Network Systems"                
+[180] "Gakken"                                
+[181] "Game Arts"                             
+[182] "Game Factory"                          
+[183] "Game Life"                             
+[184] "Gamebridge"                            
+[185] "Gamecock"                              
+[186] "Gameloft"                              
+[187] "GameMill Entertainment"                
+[188] "GameTek"                               
+[189] "Gathering of Developers"               
+[190] "General Entertainment"                 
+[191] "Genki"                                 
+[192] "Genterprise"                           
+[193] "Ghostlight"                            
+[194] "Giga"                                  
+[195] "Giza10"                                
+[196] "Glams"                                 
+[197] "Global A Entertainment"                
+[198] "Global Star"                           
+[199] "GN Software"                           
+[200] "GOA"                                   
+[201] "Gotham Games"                          
+[202] "Graffiti"                              
+[203] "Grand Prix Games"                      
+[204] "Graphsim Entertainment"                
+[205] "Gremlin Interactive Ltd"               
+[206] "Griffin International"                 
+[207] "Groove Games"                          
+[208] "GSP"                                   
+[209] "GT Interactive"                        
+[210] "GungHo"                                
+[211] "Gust"                                  
+[212] "Hackberry"                             
+[213] "HAL Laboratory"                        
+[214] "Hamster Corporation"                   
+[215] "Happinet"                              
+[216] "Harmonix Music Systems"                
+[217] "Hasbro Interactive"                    
+[218] "Havas Interactive"                     
+[219] "Headup Games"                          
+[220] "Hearty Robin"                          
+[221] "Hect"                                  
+[222] "Hello Games"                           
+[223] "Her Interactive"                       
+[224] "Hip Interactive"                       
+[225] "HMH Interactive"                       
+[226] "Home Entertainment Suppliers"          
+[227] "Hudson Entertainment"                  
+[228] "Hudson Soft"                           
+[229] "Human Entertainment"                   
+[230] "HuneX"                                 
+[231] "Iceberg Interactive"                   
+[232] "id Software"                           
+[233] "Idea Factory"                          
+[234] "Idea Factory International"            
+[235] "IE Institute"                          
+[236] "Ignition Entertainment"                
+[237] "Illusion Softworks"                    
+[238] "Imadio"                                
+[239] "Image Epoch"                           
+[240] "imageepoch Inc."                       
+[241] "Imageworks"                            
+[242] "Imagic"                                
+[243] "Imagineer"                             
+[244] "Imax"                                  
+[245] "Indie Games"                           
+[246] "Infogrames"                            
+[247] "Insomniac Games"                       
+[248] "Interchannel"                          
+[249] "Interchannel-Holon"                    
+[250] "Intergrow"                             
+[251] "Interplay"                             
+[252] "Interplay Productions"                 
+[253] "Interworks Unlimited, Inc."            
+[254] "Inti Creates"                          
+[255] "Introversion Software"                 
+[256] "inXile Entertainment"                  
+[257] "Irem Software Engineering"             
+[258] "ITT Family Games"                      
+[259] "Ivolgamus"                             
+[260] "iWin"                                  
+[261] "Jack of All Games"                     
+[262] "Jaleco"                                
+[263] "Jester Interactive"                    
+[264] "Jorudan"                               
+[265] "JoWood Productions"                    
+[266] "Just Flight"                           
+[267] "JVC"                                   
+[268] "Kadokawa Games"                        
+[269] "Kadokawa Shoten"                       
+[270] "Kaga Create"                           
+[271] "Kalypso Media"                         
+[272] "Kamui"                                 
+[273] "Kando Games"                           
+[274] "Karin Entertainment"                   
+[275] "Kemco"                                 
+[276] "KID"                                   
+[277] "Kids Station"                          
+[278] "King Records"                          
+[279] "Knowledge Adventure"                   
+[280] "Koch Media"                            
+[281] "Kokopeli Digital Studios"              
+[282] "Konami Digital Entertainment"          
+[283] "Kool Kizz"                             
+[284] "KSS"                                   
+[285] "Laguna"                                
+[286] "Legacy Interactive"                    
+[287] "LEGO Media"                            
+[288] "Level 5"                               
+[289] "Lexicon Entertainment"                 
+[290] "Licensed 4U"                           
+[291] "Lighthouse Interactive"                
+[292] "Liquid Games"                          
+[293] "Little Orbit"                          
+[294] "Locus"                                 
+[295] "LSP Games"                             
+[296] "LucasArts"                             
+[297] "Mad Catz"                              
+[298] "Magical Company"                       
+[299] "Magix"                                 
+[300] "Majesco Entertainment"                 
+[301] "Mamba Games"                           
+[302] "Marvel Entertainment"                  
+[303] "Marvelous Entertainment"               
+[304] "Marvelous Games"                       
+[305] "Marvelous Interactive"                 
+[306] "Masque Publishing"                     
+[307] "Mastertronic"                          
+[308] "Mastiff"                               
+[309] "Mattel Interactive"                    
+[310] "Max Five"                              
+[311] "Maximum Family Games"                  
+[312] "Maxis"                                 
+[313] "MC2 Entertainment"                     
+[314] "Media Entertainment"                   
+[315] "Media Factory"                         
+[316] "Media Rings"                           
+[317] "Media Works"                           
+[318] "MediaQuest"                            
+[319] "Men-A-Vision"                          
+[320] "Mentor Interactive"                    
+[321] "Mercury Games"                         
+[322] "Merscom LLC"                           
+[323] "Metro 3D"                              
+[324] "Michaelsoft"                           
+[325] "Micro Cabin"                           
+[326] "Microids"                              
+[327] "Microprose"                            
+[328] "Microsoft Game Studios"                
+[329] "Midas Interactive Entertainment"       
+[330] "Midway Games"                          
+[331] "Milestone"                             
+[332] "Milestone S.r.l"                       
+[333] "Milestone S.r.l."                      
+[334] "Minato Station"                        
+[335] "Mindscape"                             
+[336] "Mirai Shounen"                         
+[337] "Misawa"                                
+[338] "Mitsui"                                
+[339] "mixi, Inc"                             
+[340] "MLB.com"                               
+[341] "Mojang"                                
+[342] "Monte Christo Multimedia"              
+[343] "Moss"                                  
+[344] "MTO"                                   
+[345] "MTV Games"                             
+[346] "Mud Duck Productions"                  
+[347] "Mumbo Jumbo"                           
+[348] "Mycom"                                 
+[349] "Myelin Media"                          
+[350] "Mystique"                              
+[351] "Namco Bandai Games"                    
+[352] "Natsume"                               
+[353] "Navarre Corp"                          
+[354] "Naxat Soft"                            
+[355] "NCS"                                   
+[356] "NCSoft"                                
+[357] "NDA Productions"                       
+[358] "NEC"                                   
+[359] "NEC Interchannel"                      
+[360] "Neko Entertainment"                    
+[361] "NetRevo"                               
+[362] "New"                                   
+[363] "New World Computing"                   
+[364] "NewKidCo"                              
+[365] "Nexon"                                 
+[366] "Nichibutsu"                            
+[367] "Nihon Falcom Corporation"              
+[368] "Nintendo"                              
+[369] "Nippon Amuse"                          
+[370] "Nippon Columbia"                       
+[371] "Nippon Ichi Software"                  
+[372] "Nippon Telenet"                        
+[373] "Nitroplus"                             
+[374] "Nobilis"                               
+[375] "Nordcurrent"                           
+[376] "Nordic Games"                          
+[377] "NovaLogic"                             
+[378] "Number None"                           
+[379] "O-Games"                               
+[380] "O3 Entertainment"                      
+[381] "Ocean"                                 
+[382] "Office Create"                         
+[383] "On Demand"                             
+[384] "Ongakukan"                             
+[385] "Origin Systems"                        
+[386] "Otomate"                               
+[387] "Oxygen Interactive"                    
+[388] "P2 Games"                              
+[389] "Pacific Century Cyber Works"           
+[390] "Pack-In-Video"                         
+[391] "Pack In Soft"                          
+[392] "Palcom"                                
+[393] "Panther Software"                      
+[394] "Paon"                                  
+[395] "Paon Corporation"                      
+[396] "Paradox Development"                   
+[397] "Paradox Interactive"                   
+[398] "Parker Bros."                          
+[399] "Performance Designed Products"         
+[400] "Phantagram"                            
+[401] "Phantom EFX"                           
+[402] "Phenomedia"                            
+[403] "Phoenix Games"                         
+[404] "Piacci"                                
+[405] "Pinnacle"                              
+[406] "Pioneer LDC"                           
+[407] "Play It"                               
+[408] "Playlogic Game Factory"                
+[409] "Playmates"                             
+[410] "Playmore"                              
+[411] "PlayV"                                 
+[412] "Plenty"                                
+[413] "PM Studios"                            
+[414] "Pony Canyon"                           
+[415] "PopCap Games"                          
+[416] "Popcorn Arcade"                        
+[417] "PopTop Software"                       
+[418] "Pow"                                   
+[419] "PQube"                                 
+[420] "Princess Soft"                         
+[421] "Prototype"                             
+[422] "Psygnosis"                             
+[423] "Quelle"                                
+[424] "Quest"                                 
+[425] "Quinrose"                              
+[426] "Quintet"                               
+[427] "Rage Software"                         
+[428] "Rain Games"                            
+[429] "Rebellion"                             
+[430] "Rebellion Developments"                
+[431] "RED Entertainment"                     
+[432] "Red Orb"                               
+[433] "Red Storm Entertainment"               
+[434] "RedOctane"                             
+[435] "Reef Entertainment"                    
+[436] "responDESIGN"                          
+[437] "Revolution (Japan)"                    
+[438] "Revolution Software"                   
+[439] "Rising Star Games"                     
+[440] "Riverhillsoft"                         
+[441] "Rocket Company"                        
+[442] "Rondomedia"                            
+[443] "RTL"                                   
+[444] "Russel"                                
+[445] "Sammy Corporation"                     
+[446] "Saurus"                                
+[447] "Scholastic Inc."                       
+[448] "SCi"                                   
+[449] "Screenlife"                            
+[450] "SCS Software"                          
+[451] "Sears"                                 
+[452] "Sega"                                  
+[453] "Seta Corporation"                      
+[454] "Seventh Chord"                         
+[455] "Shogakukan"                            
+[456] "Simon &amp; Schuster Interactive"          
+[457] "Slightly Mad Studios"                  
+[458] "Slitherine Software"                   
+[459] "SNK"                                   
+[460] "SNK Playmore"                          
+[461] "Societa"                               
+[462] "Sold Out"                              
+[463] "Sonnet"                                
+[464] "Sony Computer Entertainment"           
+[465] "Sony Computer Entertainment America"   
+[466] "Sony Computer Entertainment Europe"    
+[467] "Sony Music Entertainment"              
+[468] "Sony Online Entertainment"             
+[469] "SouthPeak Games"                       
+[470] "Spike"                                 
+[471] "SPS"                                   
+[472] "Square"                                
+[473] "Square EA"                             
+[474] "Square Enix"                           
+[475] "SquareSoft"                            
+[476] "SSI"                                   
+[477] "Stainless Games"                       
+[478] "Starfish"                              
+[479] "Starpath Corp."                        
+[480] "Sting"                                 
+[481] "Storm City Games"                      
+[482] "Strategy First"                        
+[483] "Success"                               
+[484] "Summitsoft"                            
+[485] "Sunflowers"                            
+[486] "Sunrise Interactive"                   
+[487] "Sunsoft"                               
+[488] "Sweets"                                
+[489] "Swing! Entertainment"                  
+[490] "Syscom"                                
+[491] "System 3"                              
+[492] "System 3 Arcade Software"              
+[493] "System Soft"                           
+[494] "T&amp;E Soft"                              
+[495] "Taito"                                 
+[496] "Takara"                                
+[497] "Takara Tomy"                           
+[498] "Take-Two Interactive"                  
+[499] "Takuyo"                                
+[500] "TalonSoft"                             
+[501] "TDK Core"                              
+[502] "TDK Mediactive"                        
+[503] "Team17 Software"                       
+[504] "Technos Japan Corporation"             
+[505] "TechnoSoft"                            
+[506] "Tecmo Koei"                            
+[507] "Telegames"                             
+[508] "Telltale Games"                        
+[509] "Telstar"                               
+[510] "Tetris Online"                         
+[511] "TGL"                                   
+[512] "The Adventure Company"                 
+[513] "The Learning Company"                  
+[514] "THQ"                                   
+[515] "Tigervision"                           
+[516] "Time Warner Interactive"               
+[517] "Titus"                                 
+[518] "Tivola"                                
+[519] "TOHO"                                  
+[520] "Tommo"                                 
+[521] "Tomy Corporation"                      
+[522] "TopWare Interactive"                   
+[523] "Touchstone"                            
+[524] "Tradewest"                             
+[525] "Trion Worlds"                          
+[526] "Tripwire Interactive"                  
+[527] "Tru Blu Entertainment"                 
+[528] "Tryfirst"                              
+[529] "TYO"                                   
+[530] "Type-Moon"                             
+[531] "U.S. Gold"                             
+[532] "Ubisoft"                               
+[533] "Ubisoft Annecy"                        
+[534] "UEP Systems"                           
+[535] "UFO Interactive"                       
+[536] "UIG Entertainment"                     
+[537] "Ultravision"                           
+[538] "Universal Gamex"                       
+[539] "Universal Interactive"                 
+[540] "Unknown"                               
+[541] "Valcon Games"                          
+[542] "ValuSoft"                              
+[543] "Valve"                                 
+[544] "Valve Software"                        
+[545] "Vap"                                   
+[546] "Vatical Entertainment"                 
+[547] "Vic Tokai"                             
+[548] "Victor Interactive"                    
+[549] "Video System"                          
+[550] "Views"                                 
+[551] "Vir2L Studios"                         
+[552] "Virgin Interactive"                    
+[553] "Virtual Play Games"                    
+[554] "Visco"                                 
+[555] "Vivendi Games"                         
+[556] "Wanadoo"                               
+[557] "Warashi"                               
+[558] "Wargaming.net"                         
+[559] "Warner Bros. Interactive Entertainment"
+[560] "Warp"                                  
+[561] "WayForward Technologies"               
+[562] "Westwood Studios"                      
+[563] "White Park Bay Software"               
+[564] "Wizard Video Games"                    
+[565] "Xicat Interactive"                     
+[566] "Xing Entertainment"                    
+[567] "Xplosiv"                               
+[568] "XS Games"                              
+[569] "Xseed Games"                           
+[570] "Yacht Club Games"                      
+[571] "Yamasa Entertainment"                  
+[572] "Yeti"                                  
+[573] "Yuke's"                                
+[574] "Yumedia"                               
+[575] "Zenrin"                                
+[576] "Zoo Digital Publishing"                
+[577] "Zoo Games"                             
+[578] "Zushi Games"                           </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">levels</span>(game_sales<span class="sc">$</span>Genre) <span class="co">#12</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> [1] "Action"       "Adventure"    "Fighting"     "Misc"         "Platform"    
+ [6] "Puzzle"       "Racing"       "Role-Playing" "Shooter"      "Simulation"  
+[11] "Sports"       "Strategy"    </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">levels</span>(game_sales<span class="sc">$</span>Platform) <span class="co">#31</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> [1] "2600" "3DO"  "3DS"  "DC"   "DS"   "GB"   "GBA"  "GC"   "GEN"  "GG"  
+[11] "N64"  "NES"  "NG"   "PC"   "PCFX" "PS"   "PS2"  "PS3"  "PS4"  "PSP" 
+[21] "PSV"  "SAT"  "SCD"  "SNES" "TG16" "Wii"  "WiiU" "WS"   "X360" "XB"  
+[31] "XOne"</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>g_s <span class="ot">&lt;-</span> game_sales <span class="sc">%&gt;%</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">na.omit</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="co">#  select(Global_Sales,Genre,Publisher,Platform) %&gt;%</span></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>  fastDummies<span class="sc">::</span><span class="fu">dummy_cols</span>(.,<span class="at">select_columns =</span> <span class="st">'Publisher'</span>,<span class="at">remove_selected_columns=</span>T)</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(g_s[,<span class="dv">10</span><span class="sc">:</span><span class="fu">ncol</span>(g_s)])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  [1] "Global_Sales"                                    
+  [2] "Publisher_10TACLE Studios"                       
+  [3] "Publisher_1C Company"                            
+  [4] "Publisher_20th Century Fox Video Games"          
+  [5] "Publisher_2D Boy"                                
+  [6] "Publisher_3DO"                                   
+  [7] "Publisher_49Games"                               
+  [8] "Publisher_505 Games"                             
+  [9] "Publisher_5pb"                                   
+ [10] "Publisher_7G//AMES"                              
+ [11] "Publisher_989 Sports"                            
+ [12] "Publisher_989 Studios"                           
+ [13] "Publisher_Abylight"                              
+ [14] "Publisher_Acclaim Entertainment"                 
+ [15] "Publisher_Accolade"                              
+ [16] "Publisher_Ackkstudios"                           
+ [17] "Publisher_Acquire"                               
+ [18] "Publisher_Activision"                            
+ [19] "Publisher_Activision Blizzard"                   
+ [20] "Publisher_Activision Value"                      
+ [21] "Publisher_Adeline Software"                      
+ [22] "Publisher_Aerosoft"                              
+ [23] "Publisher_Agatsuma Entertainment"                
+ [24] "Publisher_Agetec"                                
+ [25] "Publisher_Aksys Games"                           
+ [26] "Publisher_Alawar Entertainment"                  
+ [27] "Publisher_Alchemist"                             
+ [28] "Publisher_Alternative Software"                  
+ [29] "Publisher_Altron"                                
+ [30] "Publisher_Alvion"                                
+ [31] "Publisher_American Softworks"                    
+ [32] "Publisher_Angel Studios"                         
+ [33] "Publisher_Answer Software"                       
+ [34] "Publisher_AQ Interactive"                        
+ [35] "Publisher_Aqua Plus"                             
+ [36] "Publisher_Aques"                                 
+ [37] "Publisher_Arc System Works"                      
+ [38] "Publisher_Arena Entertainment"                   
+ [39] "Publisher_Aria"                                  
+ [40] "Publisher_Arika"                                 
+ [41] "Publisher_ArtDink"                               
+ [42] "Publisher_Aruze Corp"                            
+ [43] "Publisher_ASC Games"                             
+ [44] "Publisher_Ascaron Entertainment"                 
+ [45] "Publisher_Ascaron Entertainment GmbH"            
+ [46] "Publisher_ASCII Entertainment"                   
+ [47] "Publisher_ASCII Media Works"                     
+ [48] "Publisher_Asgard"                                
+ [49] "Publisher_ASK"                                   
+ [50] "Publisher_Asmik Ace Entertainment"               
+ [51] "Publisher_Asmik Corp"                            
+ [52] "Publisher_Aspyr"                                 
+ [53] "Publisher_Astragon"                              
+ [54] "Publisher_Asylum Entertainment"                  
+ [55] "Publisher_Atari"                                 
+ [56] "Publisher_Athena"                                
+ [57] "Publisher_Atlus"                                 
+ [58] "Publisher_Avalon Interactive"                    
+ [59] "Publisher_Avanquest"                             
+ [60] "Publisher_Avanquest Software"                    
+ [61] "Publisher_Axela"                                 
+ [62] "Publisher_BAM! Entertainment"                    
+ [63] "Publisher_Banpresto"                             
+ [64] "Publisher_Benesse"                               
+ [65] "Publisher_Berkeley"                              
+ [66] "Publisher_Bethesda Softworks"                    
+ [67] "Publisher_Big Ben Interactive"                   
+ [68] "Publisher_Big Fish Games"                        
+ [69] "Publisher_Bigben Interactive"                    
+ [70] "Publisher_bitComposer Games"                     
+ [71] "Publisher_Black Bean Games"                      
+ [72] "Publisher_Black Label Games"                     
+ [73] "Publisher_Blast! Entertainment Ltd"              
+ [74] "Publisher_Blue Byte"                             
+ [75] "Publisher_BMG Interactive Entertainment"         
+ [76] "Publisher_Bohemia Interactive"                   
+ [77] "Publisher_Bomb"                                  
+ [78] "Publisher_Boost On"                              
+ [79] "Publisher_BPS"                                   
+ [80] "Publisher_Brash Entertainment"                   
+ [81] "Publisher_Broccoli"                              
+ [82] "Publisher_BushiRoad"                             
+ [83] "Publisher_Capcom"                                
+ [84] "Publisher_Cave"                                  
+ [85] "Publisher_CBS Electronics"                       
+ [86] "Publisher_CCP"                                   
+ [87] "Publisher_CDV Software Entertainment"            
+ [88] "Publisher_ChunSoft"                              
+ [89] "Publisher_City Interactive"                      
+ [90] "Publisher_Cloud Imperium Games Corporation"      
+ [91] "Publisher_Coconuts Japan"                        
+ [92] "Publisher_Codemasters"                           
+ [93] "Publisher_Codemasters Online"                    
+ [94] "Publisher_CokeM Interactive"                     
+ [95] "Publisher_Coleco"                                
+ [96] "Publisher_Comfort"                               
+ [97] "Publisher_Commseed"                              
+ [98] "Publisher_Compile"                               
+ [99] "Publisher_Compile Heart"                         
+[100] "Publisher_Conspiracy Entertainment"              
+[101] "Publisher_Core Design Ltd."                      
+[102] "Publisher_CPG Products"                          
+[103] "Publisher_Crave Entertainment"                   
+[104] "Publisher_Creative Core"                         
+[105] "Publisher_Crimson Cow"                           
+[106] "Publisher_Crystal Dynamics"                      
+[107] "Publisher_CTO SpA"                               
+[108] "Publisher_Culture Brain"                         
+[109] "Publisher_Culture Publishers"                    
+[110] "Publisher_CyberFront"                            
+[111] "Publisher_Cygames"                               
+[112] "Publisher_D3Publisher"                           
+[113] "Publisher_Daedalic"                              
+[114] "Publisher_Daedalic Entertainment"                
+[115] "Publisher_Daito"                                 
+[116] "Publisher_Data Age"                              
+[117] "Publisher_Data Design Interactive"               
+[118] "Publisher_Data East"                             
+[119] "Publisher_Datam Polystar"                        
+[120] "Publisher_Deep Silver"                           
+[121] "Publisher_Destination Software, Inc"             
+[122] "Publisher_Destineer"                             
+[123] "Publisher_Detn8 Games"                           
+[124] "Publisher_Devolver Digital"                      
+[125] "Publisher_DHM Interactive"                       
+[126] "Publisher_DigiCube"                              
+[127] "Publisher_Disney Interactive Studios"            
+[128] "Publisher_Dorart"                                
+[129] "Publisher_dramatic create"                       
+[130] "Publisher_DreamCatcher Interactive"              
+[131] "Publisher_DreamWorks Interactive"                
+[132] "Publisher_DSI Games"                             
+[133] "Publisher_DTP Entertainment"                     
+[134] "Publisher_Dusenberry Martin Racing"              
+[135] "Publisher_EA Games"                              
+[136] "Publisher_Easy Interactive"                      
+[137] "Publisher_Ecole"                                 
+[138] "Publisher_Edia"                                  
+[139] "Publisher_Eidos Interactive"                     
+[140] "Publisher_Electronic Arts"                       
+[141] "Publisher_Electronic Arts Victor"                
+[142] "Publisher_Elf"                                   
+[143] "Publisher_Elite"                                 
+[144] "Publisher_Empire Interactive"                    
+[145] "Publisher_Encore"                                
+[146] "Publisher_Enix Corporation"                      
+[147] "Publisher_Enjoy Gaming ltd."                     
+[148] "Publisher_Enterbrain"                            
+[149] "Publisher_EON Digital Entertainment"             
+[150] "Publisher_Epic Games"                            
+[151] "Publisher_Epoch"                                 
+[152] "Publisher_Ertain"                                
+[153] "Publisher_ESP"                                   
+[154] "Publisher_Essential Games"                       
+[155] "Publisher_Evolution Games"                       
+[156] "Publisher_Evolved Games"                         
+[157] "Publisher_Excalibur Publishing"                  
+[158] "Publisher_Experience Inc."                       
+[159] "Publisher_Extreme Entertainment Group"           
+[160] "Publisher_Falcom Corporation"                    
+[161] "Publisher_Fields"                                
+[162] "Publisher_Flashpoint Games"                      
+[163] "Publisher_Flight-Plan"                           
+[164] "Publisher_Focus Home Interactive"                
+[165] "Publisher_Focus Multimedia"                      
+[166] "Publisher_fonfun"                                
+[167] "Publisher_Foreign Media Games"                   
+[168] "Publisher_Fortyfive"                             
+[169] "Publisher_Fox Interactive"                       
+[170] "Publisher_From Software"                         
+[171] "Publisher_Fuji"                                  
+[172] "Publisher_Funbox Media"                          
+[173] "Publisher_Funcom"                                
+[174] "Publisher_FunSoft"                               
+[175] "Publisher_Funsta"                                
+[176] "Publisher_FuRyu"                                 
+[177] "Publisher_FuRyu Corporation"                     
+[178] "Publisher_G.Rev"                                 
+[179] "Publisher_Gaga"                                  
+[180] "Publisher_Gainax Network Systems"                
+[181] "Publisher_Gakken"                                
+[182] "Publisher_Game Arts"                             
+[183] "Publisher_Game Factory"                          
+[184] "Publisher_Game Life"                             
+[185] "Publisher_Gamebridge"                            
+[186] "Publisher_Gamecock"                              
+[187] "Publisher_Gameloft"                              
+[188] "Publisher_GameMill Entertainment"                
+[189] "Publisher_GameTek"                               
+[190] "Publisher_Gathering of Developers"               
+[191] "Publisher_General Entertainment"                 
+[192] "Publisher_Genki"                                 
+[193] "Publisher_Genterprise"                           
+[194] "Publisher_Ghostlight"                            
+[195] "Publisher_Giga"                                  
+[196] "Publisher_Giza10"                                
+[197] "Publisher_Glams"                                 
+[198] "Publisher_Global A Entertainment"                
+[199] "Publisher_Global Star"                           
+[200] "Publisher_GN Software"                           
+[201] "Publisher_GOA"                                   
+[202] "Publisher_Gotham Games"                          
+[203] "Publisher_Graffiti"                              
+[204] "Publisher_Grand Prix Games"                      
+[205] "Publisher_Graphsim Entertainment"                
+[206] "Publisher_Gremlin Interactive Ltd"               
+[207] "Publisher_Griffin International"                 
+[208] "Publisher_Groove Games"                          
+[209] "Publisher_GSP"                                   
+[210] "Publisher_GT Interactive"                        
+[211] "Publisher_GungHo"                                
+[212] "Publisher_Gust"                                  
+[213] "Publisher_Hackberry"                             
+[214] "Publisher_HAL Laboratory"                        
+[215] "Publisher_Hamster Corporation"                   
+[216] "Publisher_Happinet"                              
+[217] "Publisher_Harmonix Music Systems"                
+[218] "Publisher_Hasbro Interactive"                    
+[219] "Publisher_Havas Interactive"                     
+[220] "Publisher_Headup Games"                          
+[221] "Publisher_Hearty Robin"                          
+[222] "Publisher_Hect"                                  
+[223] "Publisher_Hello Games"                           
+[224] "Publisher_Her Interactive"                       
+[225] "Publisher_Hip Interactive"                       
+[226] "Publisher_HMH Interactive"                       
+[227] "Publisher_Home Entertainment Suppliers"          
+[228] "Publisher_Hudson Entertainment"                  
+[229] "Publisher_Hudson Soft"                           
+[230] "Publisher_Human Entertainment"                   
+[231] "Publisher_HuneX"                                 
+[232] "Publisher_Iceberg Interactive"                   
+[233] "Publisher_id Software"                           
+[234] "Publisher_Idea Factory"                          
+[235] "Publisher_Idea Factory International"            
+[236] "Publisher_IE Institute"                          
+[237] "Publisher_Ignition Entertainment"                
+[238] "Publisher_Illusion Softworks"                    
+[239] "Publisher_Imadio"                                
+[240] "Publisher_Image Epoch"                           
+[241] "Publisher_imageepoch Inc."                       
+[242] "Publisher_Imageworks"                            
+[243] "Publisher_Imagic"                                
+[244] "Publisher_Imagineer"                             
+[245] "Publisher_Imax"                                  
+[246] "Publisher_Indie Games"                           
+[247] "Publisher_Infogrames"                            
+[248] "Publisher_Insomniac Games"                       
+[249] "Publisher_Interchannel"                          
+[250] "Publisher_Interchannel-Holon"                    
+[251] "Publisher_Intergrow"                             
+[252] "Publisher_Interplay"                             
+[253] "Publisher_Interplay Productions"                 
+[254] "Publisher_Interworks Unlimited, Inc."            
+[255] "Publisher_Inti Creates"                          
+[256] "Publisher_Introversion Software"                 
+[257] "Publisher_inXile Entertainment"                  
+[258] "Publisher_Irem Software Engineering"             
+[259] "Publisher_ITT Family Games"                      
+[260] "Publisher_Ivolgamus"                             
+[261] "Publisher_iWin"                                  
+[262] "Publisher_Jack of All Games"                     
+[263] "Publisher_Jaleco"                                
+[264] "Publisher_Jester Interactive"                    
+[265] "Publisher_Jorudan"                               
+[266] "Publisher_JoWood Productions"                    
+[267] "Publisher_Just Flight"                           
+[268] "Publisher_JVC"                                   
+[269] "Publisher_Kadokawa Games"                        
+[270] "Publisher_Kadokawa Shoten"                       
+[271] "Publisher_Kaga Create"                           
+[272] "Publisher_Kalypso Media"                         
+[273] "Publisher_Kamui"                                 
+[274] "Publisher_Kando Games"                           
+[275] "Publisher_Karin Entertainment"                   
+[276] "Publisher_Kemco"                                 
+[277] "Publisher_KID"                                   
+[278] "Publisher_Kids Station"                          
+[279] "Publisher_King Records"                          
+[280] "Publisher_Knowledge Adventure"                   
+[281] "Publisher_Koch Media"                            
+[282] "Publisher_Kokopeli Digital Studios"              
+[283] "Publisher_Konami Digital Entertainment"          
+[284] "Publisher_Kool Kizz"                             
+[285] "Publisher_KSS"                                   
+[286] "Publisher_Laguna"                                
+[287] "Publisher_Legacy Interactive"                    
+[288] "Publisher_LEGO Media"                            
+[289] "Publisher_Level 5"                               
+[290] "Publisher_Lexicon Entertainment"                 
+[291] "Publisher_Licensed 4U"                           
+[292] "Publisher_Lighthouse Interactive"                
+[293] "Publisher_Liquid Games"                          
+[294] "Publisher_Little Orbit"                          
+[295] "Publisher_Locus"                                 
+[296] "Publisher_LSP Games"                             
+[297] "Publisher_LucasArts"                             
+[298] "Publisher_Mad Catz"                              
+[299] "Publisher_Magical Company"                       
+[300] "Publisher_Magix"                                 
+[301] "Publisher_Majesco Entertainment"                 
+[302] "Publisher_Mamba Games"                           
+[303] "Publisher_Marvel Entertainment"                  
+[304] "Publisher_Marvelous Entertainment"               
+[305] "Publisher_Marvelous Games"                       
+[306] "Publisher_Marvelous Interactive"                 
+[307] "Publisher_Masque Publishing"                     
+[308] "Publisher_Mastertronic"                          
+[309] "Publisher_Mastiff"                               
+[310] "Publisher_Mattel Interactive"                    
+[311] "Publisher_Max Five"                              
+[312] "Publisher_Maximum Family Games"                  
+[313] "Publisher_Maxis"                                 
+[314] "Publisher_MC2 Entertainment"                     
+[315] "Publisher_Media Entertainment"                   
+[316] "Publisher_Media Factory"                         
+[317] "Publisher_Media Rings"                           
+[318] "Publisher_Media Works"                           
+[319] "Publisher_MediaQuest"                            
+[320] "Publisher_Men-A-Vision"                          
+[321] "Publisher_Mentor Interactive"                    
+[322] "Publisher_Mercury Games"                         
+[323] "Publisher_Merscom LLC"                           
+[324] "Publisher_Metro 3D"                              
+[325] "Publisher_Michaelsoft"                           
+[326] "Publisher_Micro Cabin"                           
+[327] "Publisher_Microids"                              
+[328] "Publisher_Microprose"                            
+[329] "Publisher_Microsoft Game Studios"                
+[330] "Publisher_Midas Interactive Entertainment"       
+[331] "Publisher_Midway Games"                          
+[332] "Publisher_Milestone"                             
+[333] "Publisher_Milestone S.r.l"                       
+[334] "Publisher_Milestone S.r.l."                      
+[335] "Publisher_Minato Station"                        
+[336] "Publisher_Mindscape"                             
+[337] "Publisher_Mirai Shounen"                         
+[338] "Publisher_Misawa"                                
+[339] "Publisher_Mitsui"                                
+[340] "Publisher_mixi, Inc"                             
+[341] "Publisher_MLB.com"                               
+[342] "Publisher_Mojang"                                
+[343] "Publisher_Monte Christo Multimedia"              
+[344] "Publisher_Moss"                                  
+[345] "Publisher_MTO"                                   
+[346] "Publisher_MTV Games"                             
+[347] "Publisher_Mud Duck Productions"                  
+[348] "Publisher_Mumbo Jumbo"                           
+[349] "Publisher_Mycom"                                 
+[350] "Publisher_Myelin Media"                          
+[351] "Publisher_Mystique"                              
+[352] "Publisher_Namco Bandai Games"                    
+[353] "Publisher_Natsume"                               
+[354] "Publisher_Navarre Corp"                          
+[355] "Publisher_Naxat Soft"                            
+[356] "Publisher_NCS"                                   
+[357] "Publisher_NCSoft"                                
+[358] "Publisher_NDA Productions"                       
+[359] "Publisher_NEC"                                   
+[360] "Publisher_NEC Interchannel"                      
+[361] "Publisher_Neko Entertainment"                    
+[362] "Publisher_NetRevo"                               
+[363] "Publisher_New"                                   
+[364] "Publisher_New World Computing"                   
+[365] "Publisher_NewKidCo"                              
+[366] "Publisher_Nexon"                                 
+[367] "Publisher_Nichibutsu"                            
+[368] "Publisher_Nihon Falcom Corporation"              
+[369] "Publisher_Nintendo"                              
+[370] "Publisher_Nippon Amuse"                          
+[371] "Publisher_Nippon Columbia"                       
+[372] "Publisher_Nippon Ichi Software"                  
+[373] "Publisher_Nippon Telenet"                        
+[374] "Publisher_Nitroplus"                             
+[375] "Publisher_Nobilis"                               
+[376] "Publisher_Nordcurrent"                           
+[377] "Publisher_Nordic Games"                          
+[378] "Publisher_NovaLogic"                             
+[379] "Publisher_Number None"                           
+[380] "Publisher_O-Games"                               
+[381] "Publisher_O3 Entertainment"                      
+[382] "Publisher_Ocean"                                 
+[383] "Publisher_Office Create"                         
+[384] "Publisher_On Demand"                             
+[385] "Publisher_Ongakukan"                             
+[386] "Publisher_Origin Systems"                        
+[387] "Publisher_Otomate"                               
+[388] "Publisher_Oxygen Interactive"                    
+[389] "Publisher_P2 Games"                              
+[390] "Publisher_Pacific Century Cyber Works"           
+[391] "Publisher_Pack-In-Video"                         
+[392] "Publisher_Pack In Soft"                          
+[393] "Publisher_Palcom"                                
+[394] "Publisher_Panther Software"                      
+[395] "Publisher_Paon"                                  
+[396] "Publisher_Paon Corporation"                      
+[397] "Publisher_Paradox Development"                   
+[398] "Publisher_Paradox Interactive"                   
+[399] "Publisher_Parker Bros."                          
+[400] "Publisher_Performance Designed Products"         
+[401] "Publisher_Phantagram"                            
+[402] "Publisher_Phantom EFX"                           
+[403] "Publisher_Phenomedia"                            
+[404] "Publisher_Phoenix Games"                         
+[405] "Publisher_Piacci"                                
+[406] "Publisher_Pinnacle"                              
+[407] "Publisher_Pioneer LDC"                           
+[408] "Publisher_Play It"                               
+[409] "Publisher_Playlogic Game Factory"                
+[410] "Publisher_Playmates"                             
+[411] "Publisher_Playmore"                              
+[412] "Publisher_PlayV"                                 
+[413] "Publisher_Plenty"                                
+[414] "Publisher_PM Studios"                            
+[415] "Publisher_Pony Canyon"                           
+[416] "Publisher_PopCap Games"                          
+[417] "Publisher_Popcorn Arcade"                        
+[418] "Publisher_PopTop Software"                       
+[419] "Publisher_Pow"                                   
+[420] "Publisher_PQube"                                 
+[421] "Publisher_Princess Soft"                         
+[422] "Publisher_Prototype"                             
+[423] "Publisher_Psygnosis"                             
+[424] "Publisher_Quelle"                                
+[425] "Publisher_Quest"                                 
+[426] "Publisher_Quinrose"                              
+[427] "Publisher_Quintet"                               
+[428] "Publisher_Rage Software"                         
+[429] "Publisher_Rain Games"                            
+[430] "Publisher_Rebellion"                             
+[431] "Publisher_Rebellion Developments"                
+[432] "Publisher_RED Entertainment"                     
+[433] "Publisher_Red Orb"                               
+[434] "Publisher_Red Storm Entertainment"               
+[435] "Publisher_RedOctane"                             
+[436] "Publisher_Reef Entertainment"                    
+[437] "Publisher_responDESIGN"                          
+[438] "Publisher_Revolution (Japan)"                    
+[439] "Publisher_Revolution Software"                   
+[440] "Publisher_Rising Star Games"                     
+[441] "Publisher_Riverhillsoft"                         
+[442] "Publisher_Rocket Company"                        
+[443] "Publisher_Rondomedia"                            
+[444] "Publisher_RTL"                                   
+[445] "Publisher_Russel"                                
+[446] "Publisher_Sammy Corporation"                     
+[447] "Publisher_Saurus"                                
+[448] "Publisher_Scholastic Inc."                       
+[449] "Publisher_SCi"                                   
+[450] "Publisher_Screenlife"                            
+[451] "Publisher_SCS Software"                          
+[452] "Publisher_Sears"                                 
+[453] "Publisher_Sega"                                  
+[454] "Publisher_Seta Corporation"                      
+[455] "Publisher_Seventh Chord"                         
+[456] "Publisher_Shogakukan"                            
+[457] "Publisher_Simon &amp; Schuster Interactive"          
+[458] "Publisher_Slightly Mad Studios"                  
+[459] "Publisher_Slitherine Software"                   
+[460] "Publisher_SNK"                                   
+[461] "Publisher_SNK Playmore"                          
+[462] "Publisher_Societa"                               
+[463] "Publisher_Sold Out"                              
+[464] "Publisher_Sonnet"                                
+[465] "Publisher_Sony Computer Entertainment"           
+[466] "Publisher_Sony Computer Entertainment America"   
+[467] "Publisher_Sony Computer Entertainment Europe"    
+[468] "Publisher_Sony Music Entertainment"              
+[469] "Publisher_Sony Online Entertainment"             
+[470] "Publisher_SouthPeak Games"                       
+[471] "Publisher_Spike"                                 
+[472] "Publisher_SPS"                                   
+[473] "Publisher_Square"                                
+[474] "Publisher_Square EA"                             
+[475] "Publisher_Square Enix"                           
+[476] "Publisher_SquareSoft"                            
+[477] "Publisher_SSI"                                   
+[478] "Publisher_Stainless Games"                       
+[479] "Publisher_Starfish"                              
+[480] "Publisher_Starpath Corp."                        
+[481] "Publisher_Sting"                                 
+[482] "Publisher_Storm City Games"                      
+[483] "Publisher_Strategy First"                        
+[484] "Publisher_Success"                               
+[485] "Publisher_Summitsoft"                            
+[486] "Publisher_Sunflowers"                            
+[487] "Publisher_Sunrise Interactive"                   
+[488] "Publisher_Sunsoft"                               
+[489] "Publisher_Sweets"                                
+[490] "Publisher_Swing! Entertainment"                  
+[491] "Publisher_Syscom"                                
+[492] "Publisher_System 3"                              
+[493] "Publisher_System 3 Arcade Software"              
+[494] "Publisher_System Soft"                           
+[495] "Publisher_T&amp;E Soft"                              
+[496] "Publisher_Taito"                                 
+[497] "Publisher_Takara"                                
+[498] "Publisher_Takara Tomy"                           
+[499] "Publisher_Take-Two Interactive"                  
+[500] "Publisher_Takuyo"                                
+[501] "Publisher_TalonSoft"                             
+[502] "Publisher_TDK Core"                              
+[503] "Publisher_TDK Mediactive"                        
+[504] "Publisher_Team17 Software"                       
+[505] "Publisher_Technos Japan Corporation"             
+[506] "Publisher_TechnoSoft"                            
+[507] "Publisher_Tecmo Koei"                            
+[508] "Publisher_Telegames"                             
+[509] "Publisher_Telltale Games"                        
+[510] "Publisher_Telstar"                               
+[511] "Publisher_Tetris Online"                         
+[512] "Publisher_TGL"                                   
+[513] "Publisher_The Adventure Company"                 
+[514] "Publisher_The Learning Company"                  
+[515] "Publisher_THQ"                                   
+[516] "Publisher_Tigervision"                           
+[517] "Publisher_Time Warner Interactive"               
+[518] "Publisher_Titus"                                 
+[519] "Publisher_Tivola"                                
+[520] "Publisher_TOHO"                                  
+[521] "Publisher_Tommo"                                 
+[522] "Publisher_Tomy Corporation"                      
+[523] "Publisher_TopWare Interactive"                   
+[524] "Publisher_Touchstone"                            
+[525] "Publisher_Tradewest"                             
+[526] "Publisher_Trion Worlds"                          
+[527] "Publisher_Tripwire Interactive"                  
+[528] "Publisher_Tru Blu Entertainment"                 
+[529] "Publisher_Tryfirst"                              
+[530] "Publisher_TYO"                                   
+[531] "Publisher_Type-Moon"                             
+[532] "Publisher_U.S. Gold"                             
+[533] "Publisher_Ubisoft"                               
+[534] "Publisher_Ubisoft Annecy"                        
+[535] "Publisher_UEP Systems"                           
+[536] "Publisher_UFO Interactive"                       
+[537] "Publisher_UIG Entertainment"                     
+[538] "Publisher_Ultravision"                           
+[539] "Publisher_Universal Gamex"                       
+[540] "Publisher_Universal Interactive"                 
+[541] "Publisher_Unknown"                               
+[542] "Publisher_Valcon Games"                          
+[543] "Publisher_ValuSoft"                              
+[544] "Publisher_Valve"                                 
+[545] "Publisher_Valve Software"                        
+[546] "Publisher_Vap"                                   
+[547] "Publisher_Vatical Entertainment"                 
+[548] "Publisher_Vic Tokai"                             
+[549] "Publisher_Victor Interactive"                    
+[550] "Publisher_Video System"                          
+[551] "Publisher_Views"                                 
+[552] "Publisher_Vir2L Studios"                         
+[553] "Publisher_Virgin Interactive"                    
+[554] "Publisher_Virtual Play Games"                    
+[555] "Publisher_Visco"                                 
+[556] "Publisher_Vivendi Games"                         
+[557] "Publisher_Wanadoo"                               
+[558] "Publisher_Warashi"                               
+[559] "Publisher_Wargaming.net"                         
+[560] "Publisher_Warner Bros. Interactive Entertainment"
+[561] "Publisher_Warp"                                  
+[562] "Publisher_WayForward Technologies"               
+[563] "Publisher_Westwood Studios"                      
+[564] "Publisher_White Park Bay Software"               
+[565] "Publisher_Wizard Video Games"                    
+[566] "Publisher_Xicat Interactive"                     
+[567] "Publisher_Xing Entertainment"                    
+[568] "Publisher_Xplosiv"                               
+[569] "Publisher_XS Games"                              
+[570] "Publisher_Xseed Games"                           
+[571] "Publisher_Yacht Club Games"                      
+[572] "Publisher_Yamasa Entertainment"                  
+[573] "Publisher_Yeti"                                  
+[574] "Publisher_Yuke's"                                
+[575] "Publisher_Yumedia"                               
+[576] "Publisher_Zenrin"                                
+[577] "Publisher_Zoo Digital Publishing"                
+[578] "Publisher_Zoo Games"                             
+[579] "Publisher_Zushi Games"                           </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>index <span class="ot">&lt;-</span> <span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(g_s), (<span class="dv">7</span><span class="sc">/</span><span class="dv">10</span><span class="sc">*</span><span class="fu">nrow</span>(g_s)))</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="co"># las &lt;- randomForest::randomForest(Global_Sales~.-Global_Sales</span></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a><span class="co">#                            ,data=g_s[index,]</span></span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a><span class="co">#                            ,xtest=g_s[-index,]</span></span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a><span class="co">#                            ,ytest=g_s[-index,])</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>error <span class="ot">&lt;-</span> <span class="cn">NULL</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a><span class="co"># for(i in 1:10000){</span></span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a><span class="co">#   set.seed(i)</span></span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a><span class="co"># </span></span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a><span class="co"># index &lt;- sample(1:nrow(game_sales), (7/10*nrow(game_sales)))</span></span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a><span class="co"># </span></span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a><span class="co"># model &lt;- game_sales[index,] %&gt;%</span></span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a><span class="co">#   rpart::rpart(Global_Sales~Genre+Publisher+Platform,.)</span></span>
+<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a><span class="co"># </span></span>
+<span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a><span class="co"># pred &lt;- predict(model, newdata = game_sales[-index,])</span></span>
+<span id="cb20-12"><a href="#cb20-12" aria-hidden="true" tabindex="-1"></a><span class="co"># </span></span>
+<span id="cb20-13"><a href="#cb20-13" aria-hidden="true" tabindex="-1"></a><span class="co"># #cbind(pred, game_sales[-index,"Global_Sales"])</span></span>
+<span id="cb20-14"><a href="#cb20-14" aria-hidden="true" tabindex="-1"></a><span class="co"># #abs(mean(pred-game_sales[-index,"Global_Sales"]))*100000</span></span>
+<span id="cb20-15"><a href="#cb20-15" aria-hidden="true" tabindex="-1"></a><span class="co">#   </span></span>
+<span id="cb20-16"><a href="#cb20-16" aria-hidden="true" tabindex="-1"></a><span class="co"># error &lt;- c(error,abs(mean(pred-game_sales[-index,"Global_Sales"]))*100000)</span></span>
+<span id="cb20-17"><a href="#cb20-17" aria-hidden="true" tabindex="-1"></a><span class="co"># }</span></span>
+<span id="cb20-18"><a href="#cb20-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-19"><a href="#cb20-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-20"><a href="#cb20-20" aria-hidden="true" tabindex="-1"></a><span class="fu">min</span>(error)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in min(error): brak argumentów w min; zwracanie wartości Inf</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] Inf</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">max</span>(error)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in max(error): brak argumentów w max; zwracanie wartości -Inf</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] -Inf</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(error)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in mean.default(error): argument nie jest wartością liczbową ani
+logiczną: zwracanie wartości NA</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] NA</code></pre>
+</div>
+</div>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    setTimeout(function() {
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const cites = ref.parentNode.getAttribute('data-cites').split(' ');
+    tippyHover(ref, function() {
+      var popup = window.document.createElement('div');
+      cites.forEach(function(cite) {
+        var citeDiv = window.document.createElement('div');
+        citeDiv.classList.add('hanging-indent');
+        citeDiv.classList.add('csl-entry');
+        var biblioDiv = window.document.getElementById('ref-' + cite);
+        if (biblioDiv) {
+          citeDiv.innerHTML = biblioDiv.innerHTML;
+        }
+        popup.appendChild(citeDiv);
+      });
+      return popup.innerHTML;
+    });
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>

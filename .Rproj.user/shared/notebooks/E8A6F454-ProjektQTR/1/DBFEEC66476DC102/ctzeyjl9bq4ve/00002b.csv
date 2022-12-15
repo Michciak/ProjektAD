@@ -1,0 +1,11 @@
+"0","ggplot(aes(game_sales$Year)) +
+  geom_histogram()
+"
+"1","[1m[33mError[39m in [38;5;251m`fortify()`[39m:[22m
+[33m![39m `data` must be a data frame, or other object coercible by `fortify()`, not an S3 object with class uneval.
+Did you accidentally pass `aes()` to the `data` argument?
+Backtrace:
+[90m 1. [39mggplot2::ggplot(aes(game_sales$Year))
+[90m 2. [39mggplot2:::ggplot.default(aes(game_sales$Year))
+[90m 4. [39mggplot2:::fortify.default(data, ...)
+"

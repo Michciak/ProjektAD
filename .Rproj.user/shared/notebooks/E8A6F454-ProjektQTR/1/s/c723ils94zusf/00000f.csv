@@ -1,0 +1,27 @@
+"0","library(tidymodels)"
+"2","Ostrzeżenie: pakiet ‘tidymodels’ został zbudowany w wersji R 4.2.2"
+"2","[37m[32m✔[37m [34mbroom       [37m 1.0.1     [32m✔[37m [34mrsample     [37m 1.1.0
+[32m✔[37m [34mdials       [37m 1.1.0     [32m✔[37m [34mtune        [37m 1.0.1
+[32m✔[37m [34minfer       [37m 1.0.4     [32m✔[37m [34mworkflows   [37m 1.1.2
+[32m✔[37m [34mmodeldata   [37m 1.0.1     [32m✔[37m [34mworkflowsets[37m 1.0.0
+[32m✔[37m [34mparsnip     [37m 1.0.3     [32m✔[37m [34myardstick   [37m 1.1.0
+[32m✔[37m [34mrecipes     [37m 1.0.2     [39m
+"
+"2","Ostrzeżenie: pakiet ‘dials’ został zbudowany w wersji R 4.2.2"
+"2","Ostrzeżenie: pakiet ‘infer’ został zbudowany w wersji R 4.2.2"
+"2","Ostrzeżenie: pakiet ‘modeldata’ został zbudowany w wersji R 4.2.2"
+"2","Ostrzeżenie: pakiet ‘parsnip’ został zbudowany w wersji R 4.2.2"
+"2","Ostrzeżenie: pakiet ‘recipes’ został zbudowany w wersji R 4.2.2"
+"2","Ostrzeżenie: pakiet ‘rsample’ został zbudowany w wersji R 4.2.2"
+"2","Ostrzeżenie: pakiet ‘workflows’ został zbudowany w wersji R 4.2.2"
+"2","Ostrzeżenie: pakiet ‘yardstick’ został zbudowany w wersji R 4.2.2"
+"2","[37m── [1mConflicts[22m ──────────────────── tidymodels_conflicts() ──
+[31m✖[37m [34mscales[37m::[32mdiscard()[37m        masks [34mpurrr[37m::discard()
+[31m✖[37m [34mdplyr[37m::[32mfilter()[37m          masks [34mstats[37m::filter()
+[31m✖[37m [34mrecipes[37m::[32mfixed()[37m         masks [34mstringr[37m::fixed()
+[31m✖[37m [34mkableExtra[37m::[32mgroup_rows()[37m masks [34mdplyr[37m::group_rows()
+[31m✖[37m [34mdplyr[37m::[32mlag()[37m             masks [34mstats[37m::lag()
+[31m✖[37m [34myardstick[37m::[32mspec()[37m        masks [34mreadr[37m::spec()
+[31m✖[37m [34mrecipes[37m::[32mstep()[37m          masks [34mstats[37m::step()
+[34m•[37m Dig deeper into tidy modeling with R at [32mhttps://www.tmwr.org[37m[39m
+"

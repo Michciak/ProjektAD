@@ -1,0 +1,4 @@
+"0","library(tidyverse)"
+"0","library(ggpolot2)"
+"2","Error in library(ggpolot2) : nie ma pakietu o nazwie ‘ggpolot2’
+"

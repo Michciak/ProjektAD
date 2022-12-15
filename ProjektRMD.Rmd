@@ -1,0 +1,142 @@
+---
+title: "Analiza sprzedaży gier komputerowych 1980-2016"
+subtitle: "Projekt z Analizy Danych"
+author: "Michał Koziński"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+<style type="text/css">
+.main-container {
+  max-width: 1800px;
+  margin-left: auto;
+  margin-right: auto;
+}
+</style>
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{notatki eval=FALSE, include=FALSE}
+
+opracowanie: <https://www.kaggle.com/code/alimara/vg-sales-eda>
+
+1. Co jest celem badawczym, co chcemy uzysakć, co chcemy zbadać?
+2. Opis analizowanych danych, wizualizacja, podstawowe statystyki,
+- ważne jest aby skomentować dane
+- co się nasuwa na myśl jako analityk
+- zaznaczyć jakie zmienne ma sie do wykorzystania
+3. Import danych i ich oczyszczenie
+4. Postawienie hipotez badawczych, warto opisać co się chce zbadać, może zbudować model predykcyjny?
+5. Podsumowanie
+
+
+
+pomysły:
+  - korelacja wydawcy ze sprzedarzą w danym regionie
+  - korelacja gatunku ze sprzedarzą w danym regionie
+  - sprzedarz na konkretne platformy w danym regionie
+  - okres życia platform na podstawie roku publikacji
+  - sprzedarz w danym regionie w stosunku do roku
+  - !model prognozujacy sprzedarz na podstawie wydawcy, platformy i gatunku, roku - drzewa decyzyjne
+  - ??? wykres kołowy! udziału w sprzedarzy poszczegółnych rynków
+  - jak wzrastała sprzedarz na przestrzeni lat
+  - jak radzili sobie wydawcy
+  - jakie gatunki były popularne w danym okresie czasu
+  - jak dani wydawcy radzili sobie na poszczególnych rynkach (np. wykres liniowy dla konkretnego rynku)
+  - z jakich gatunkow dani wydawcy sa najbardziej znani
+
+
+model:
+  drzewa decyzyjne:
+  <https://www.statmethods.net/advstats/cart.html>
+
+
+
+```
+
+```{r biblioteki, include=FALSE}
+library(tidyverse)
+library(kableExtra)
+```
+
+# Przedstawienie zbioru danych
+
+Zbiór danych jest zestawieniem wyników sprzedażowych gier komputerowych z lat 1980 - 2016. Uwzględnione zostały w nim tylko tytuły, które sprzedały się w liczbie większej niż 100 000 kopii.
+Zbiór uwzględnia wyniki sprzedażowe w Ameryce Północnej, Europie i Japonii. 
+
+Zbiór danych pochodzi ze stronny *Kaggle*: <https://www.kaggle.com/datasets/arslanali4343/sales-of-video-games>.
+
+# Cele badawcze
+
+
+
+
+
+
+
+
+2020
+
+Rank - Ranking of overall sales
+
+Name - The games name
+
+Platform - Platform of the games release (i.e. PC,PS4, etc.)
+
+Year - Year of the game's release
+
+Genre - Genre of the game
+
+Publisher - Publisher of the game
+
+NA_Sales - Sales in North America (in millions)
+
+EU_Sales - Sales in Europe (in millions)
+
+JP_Sales - Sales in Japan (in millions)
+
+Other_Sales - Sales in the rest of the world (in millions)
+
+Global_Sales - Total worldwide sales.
+
+```{r wczytywanie danych}
+
+game_sales <- read.csv("C:/Users/Michc/Dropbox/Uczelnia/Semestr 5/Projekt z analizy danych/Projekt/dane/video_games.csv",na.strings = "N/A") #spoko ale do analizy, nie do modelu
+
+```
+
+```{r czyszczenie danych, message=FALSE, warning=FALSE, paged.print=TRUE}
+
+#zmiana typu danych z char na factor
+game_sales$Name <- as.factor(game_sales$Name)
+game_sales$Platform <- as.factor(game_sales$Platform)
+game_sales$Genre <- as.factor(game_sales$Genre)
+game_sales$Publisher <- as.factor(game_sales$Publisher)
+
+#zamiana roku produkcji z char na numeric
+game_sales$Year <- as.numeric(game_sales$Year)
+
+#zmiana "unknown" na NA
+game_sales[which(game_sales$Publisher=="Unknown"),6] <- NA
+
+#zestawienie braków danych z podziałem na kolumny
+kbl(tibble(Rank=sum(is.na(game_sales$Rank)),
+       Name=sum(is.na(game_sales$Name)),
+       Platform=sum(is.na(game_sales$Platform)),
+       Year=sum(is.na(game_sales$Year)),
+       Genre=sum(is.na(game_sales$Genre)),
+       Publisher=sum(is.na(game_sales$Publisher)),
+       NA_Sales=sum(is.na(game_sales$NA_Sales)),
+       EU_Sales=sum(is.na(game_sales$EU_Sales)),
+       JP_Sales=sum(is.na(game_sales$JP_Sales)),
+       Other_sales=sum(is.na(game_sales$Other_Sales)),
+       Global_Sales=sum(is.na(game_sales$Global_Sales))), table.attr = "style = \"color: black;\"",
+       caption = "<span style='font-size:37px'>Zestawienie braków danych z podziałem na kolumny</span>") %>%
+  kable_styling("striped", full_width = T) 
+
+count(game_sales[which(is.na(game_sales$Year) & is.na(game_sales$Publisher)),]) #125 takich obserwacji, gdzie nie znamy, ani roku, ani wydawcy
+
+head(levels(game_sales$Name), n = 12)
+```

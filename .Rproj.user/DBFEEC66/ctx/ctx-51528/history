@@ -1,0 +1,328 @@
+knitr::opts_chunk$set(echo = TRUE)
+dane <- read.csv("C:/Users/Michc/Dropbox/Uczelnia/Semestr 5/Projekt z analizy danych/Projekt/dane/video_games.csv") #spoko ale do analizy, nie do modelu
+head(dane)
+as.factor(dane$Platform)
+dane$Name <- as.factor(dane$Name)
+dane$Platform <- as.factor(dane$Platform)
+dane$Genre <- as.factor(dane$Genre)
+dane$Publisher <- as.factor(dane$Publisher)
+as.numeric(dane$Year)
+#zamiana roku produkcji z char na numeric
+dane$Year <- as.numeric(dane$Year)
+View(dane)
+game_sales <- read.csv("C:/Users/Michc/Dropbox/Uczelnia/Semestr 5/Projekt z analizy danych/Projekt/dane/video_games.csv") #spoko ale do analizy, nie do modelu
+game_sales$Year
+count(game_sales$Year=="N/A")
+library(tidyverse)
+count(game_sales$Year=="N/A")
+sum(game_sales$Year=="N/A")
+game_sales <- read.csv("C:/Users/Michc/Dropbox/Uczelnia/Semestr 5/Projekt z analizy danych/Projekt/dane/video_games.csv",na.strings = "N/A") #spoko ale do analizy, nie do modelu
+sum(game_sales$Year=="N/A")
+sum(game_sales$Year==NA)
+sum(is.na(game_sales$Year))
+sum(is.na(game_sales$Name))
+sum(is.na(game_sales$Platform))
+data_frame(Name=sum(is.na(game_sales$Name)))
+tibble(Name=sum(is.na(game_sales$Name)))
+tibble(Rank=sum(is.na(game_sales$Rank)),
+Name=sum(is.na(game_sales$Name)),
+Platform=sum(is.na(game_sales$Platform)),
+Year=sum(is.na(game_sales$Name)),
+Genre=sum(is.na(game_sales$Genre)),
+Publisher=sum(is.na(game_sales$Publisher)),
+NA_Sales=sum(is.na(game_sales$NA_Sales)),
+EU_Sales=sum(is.na(game_sales$EU_Sales)),
+JP_Sales=sum(is.na(game_sales$JP_Sales)),
+Other_sales=sum(is.na(game_sales$Other_Sales)),
+Global_Sales=sum(is.na(game_sales$Global_Sales)))
+#zmiana typu danych z char na factor
+game_sales$Name <- as.factor(game_sales$Name)
+game_sales$Platform <- as.factor(game_sales$Platform)
+game_sales$Genre <- as.factor(game_sales$Genre)
+dgame_sales$Publisher <- as.factor(game_sales$Publisher)
+game_sales$Publisher <- as.factor(game_sales$Publisher)
+#zamiana roku produkcji z char na numeric
+game_sales$Year <- as.numeric(game_sales$Year)
+tibble(Rank=sum(is.na(game_sales$Rank)),
+Name=sum(is.na(game_sales$Name)),
+Platform=sum(is.na(game_sales$Platform)),
+Year=sum(is.na(game_sales$Name)),
+Genre=sum(is.na(game_sales$Genre)),
+Publisher=sum(is.na(game_sales$Publisher)),
+NA_Sales=sum(is.na(game_sales$NA_Sales)),
+EU_Sales=sum(is.na(game_sales$EU_Sales)),
+JP_Sales=sum(is.na(game_sales$JP_Sales)),
+Other_sales=sum(is.na(game_sales$Other_Sales)),
+Global_Sales=sum(is.na(game_sales$Global_Sales)))
+tibble(Rank=sum(is.na(game_sales$Rank)),
+Name=sum(is.na(game_sales$Name)),
+Platform=sum(is.na(game_sales$Platform)),
+Year=sum(is.na(game_sales$Year)),
+Genre=sum(is.na(game_sales$Genre)),
+Publisher=sum(is.na(game_sales$Publisher)),
+NA_Sales=sum(is.na(game_sales$NA_Sales)),
+EU_Sales=sum(is.na(game_sales$EU_Sales)),
+JP_Sales=sum(is.na(game_sales$JP_Sales)),
+Other_sales=sum(is.na(game_sales$Other_Sales)),
+Global_Sales=sum(is.na(game_sales$Global_Sales)))
+game_sales[,1]
+game_sales[1,]
+game_sales[1,~]
+game_sales[1,]
+game_sales[1]
+game_sales
+game_sales[1,]
+game_sales[which(is.na(game_sales$Year)),]
+levels(game_sales$Name)
+game_sales[which(is.na(game_sales$Year)),]
+game_sales <- read.csv("C:/Users/Michc/Dropbox/Uczelnia/Semestr 5/Projekt z analizy danych/Projekt/dane/video_games.csv",na.strings = list("N/A","Unknown") #spoko ale do analizy, nie do modelu
+#zmiana typu danych z char na factor
+game_sales$Name <- as.factor(game_sales$Name)
+game_sales$Name <- as.factor(game_sales$Name)
+game_sales$Platform <- as.factor(game_sales$Platform)
+game_sales$Genre <- as.factor(game_sales$Genre)
+game_sales$Publisher <- as.factor(game_sales$Publisher)
+#zamiana roku produkcji z char na numeric
+game_sales$Year <- as.numeric(game_sales$Year)
+#zmiana "unknown" na NA
+#game_sales[which(),]
+#zestawienie braków danych z podziałem na kolumny
+tibble(Rank=sum(is.na(game_sales$Rank)),
+Name=sum(is.na(game_sales$Name)),
+Platform=sum(is.na(game_sales$Platform)),
+Year=sum(is.na(game_sales$Year)),
+Genre=sum(is.na(game_sales$Genre)),
+Publisher=sum(is.na(game_sales$Publisher)),
+NA_Sales=sum(is.na(game_sales$NA_Sales)),
+EU_Sales=sum(is.na(game_sales$EU_Sales)),
+JP_Sales=sum(is.na(game_sales$JP_Sales)),
+Other_sales=sum(is.na(game_sales$Other_Sales)),
+Global_Sales=sum(is.na(game_sales$Global_Sales)))
+game_sales[which(is.na(game_sales$Year)),]
+game_sales[which(game_sales$Publisher=="Unknown"),]
+#zmiana "unknown" na NA
+game_sales[which(game_sales$Publisher=="Unknown"),6]
+#zmiana "unknown" na NA
+game_sales[which(game_sales$Publisher=="Unknown"),6] <- NA
+#zestawienie braków danych z podziałem na kolumny
+tibble(Rank=sum(is.na(game_sales$Rank)),
+Name=sum(is.na(game_sales$Name)),
+Platform=sum(is.na(game_sales$Platform)),
+Year=sum(is.na(game_sales$Year)),
+Genre=sum(is.na(game_sales$Genre)),
+Publisher=sum(is.na(game_sales$Publisher)),
+NA_Sales=sum(is.na(game_sales$NA_Sales)),
+EU_Sales=sum(is.na(game_sales$EU_Sales)),
+JP_Sales=sum(is.na(game_sales$JP_Sales)),
+Other_sales=sum(is.na(game_sales$Other_Sales)),
+Global_Sales=sum(is.na(game_sales$Global_Sales)))
+game_sales[which(game_sales$Genre=="Unknown"),]
+game_sales[which(game_sales$Platform=="Unknown"),]
+game_sales[which(game_sales$Name=="Unknown"),]
+game_sales[which(is.na(game_sales$Year) && is.na(game_sales$Publisher)),]
+game_sales[which(is.na(game_sales$Year) & is.na(game_sales$Publisher)),]
+sum(game_sales[which(is.na(game_sales$Year) & is.na(game_sales$Publisher)),])
+count(game_sales[which(is.na(game_sales$Year) & is.na(game_sales$Publisher)),])
+install.packages("kableExtra")
+library(kableExtra)
+#zestawienie braków danych z podziałem na kolumny
+kable(tibble(Rank=sum(is.na(game_sales$Rank)),
+Name=sum(is.na(game_sales$Name)),
+Platform=sum(is.na(game_sales$Platform)),
+Year=sum(is.na(game_sales$Year)),
+Genre=sum(is.na(game_sales$Genre)),
+Publisher=sum(is.na(game_sales$Publisher)),
+NA_Sales=sum(is.na(game_sales$NA_Sales)),
+EU_Sales=sum(is.na(game_sales$EU_Sales)),
+JP_Sales=sum(is.na(game_sales$JP_Sales)),
+Other_sales=sum(is.na(game_sales$Other_Sales)),
+Global_Sales=sum(is.na(game_sales$Global_Sales))))
+head(game_sales$Name)
+head(levels(game_sales$Name))
+head(levels(game_sales$Name), n = 12)
+knitr::opts_chunk$set(echo = TRUE)
+#zmiana typu danych z char na factor
+game_sales$Name <- as.factor(game_sales$Name)
+game_sales$Platform <- as.factor(game_sales$Platform)
+game_sales$Genre <- as.factor(game_sales$Genre)
+game_sales$Publisher <- as.factor(game_sales$Publisher)
+#zamiana roku produkcji z char na numeric
+game_sales$Year <- as.numeric(game_sales$Year)
+#zmiana "unknown" na NA
+game_sales[which(game_sales$Publisher=="Unknown"),6] <- NA
+#zestawienie braków danych z podziałem na kolumny
+kbl(tibble(Rank=sum(is.na(game_sales$Rank)),
+Name=sum(is.na(game_sales$Name)),
+Platform=sum(is.na(game_sales$Platform)),
+Year=sum(is.na(game_sales$Year)),
+Genre=sum(is.na(game_sales$Genre)),
+Publisher=sum(is.na(game_sales$Publisher)),
+NA_Sales=sum(is.na(game_sales$NA_Sales)),
+EU_Sales=sum(is.na(game_sales$EU_Sales)),
+JP_Sales=sum(is.na(game_sales$JP_Sales)),
+Other_sales=sum(is.na(game_sales$Other_Sales)),
+Global_Sales=sum(is.na(game_sales$Global_Sales))), table.attr = "style = \"color: black;\"",
+caption = "<span style='font-size:37px'>Zestawienie braków danych z podziałem na kolumny</span>") %>%
+kable_styling("striped", full_width = T)
+library(tidyverse)
+library(kableExtra)
+#zmiana typu danych z char na factor
+game_sales$Name <- as.factor(game_sales$Name)
+game_sales$Platform <- as.factor(game_sales$Platform)
+game_sales$Genre <- as.factor(game_sales$Genre)
+game_sales$Publisher <- as.factor(game_sales$Publisher)
+#zamiana roku produkcji z char na numeric
+game_sales$Year <- as.numeric(game_sales$Year)
+#zmiana "unknown" na NA
+game_sales[which(game_sales$Publisher=="Unknown"),6] <- NA
+#zestawienie braków danych z podziałem na kolumny
+kbl(tibble(Rank=sum(is.na(game_sales$Rank)),
+Name=sum(is.na(game_sales$Name)),
+Platform=sum(is.na(game_sales$Platform)),
+Year=sum(is.na(game_sales$Year)),
+Genre=sum(is.na(game_sales$Genre)),
+Publisher=sum(is.na(game_sales$Publisher)),
+NA_Sales=sum(is.na(game_sales$NA_Sales)),
+EU_Sales=sum(is.na(game_sales$EU_Sales)),
+JP_Sales=sum(is.na(game_sales$JP_Sales)),
+Other_sales=sum(is.na(game_sales$Other_Sales)),
+Global_Sales=sum(is.na(game_sales$Global_Sales))), table.attr = "style = \"color: black;\"",
+caption = "<span style='font-size:37px'>Zestawienie braków danych z podziałem na kolumny</span>") %>%
+kable_styling("striped", full_width = T)
+count(game_sales[which(is.na(game_sales$Year) & is.na(game_sales$Publisher)),]) #125 takich obserwacji, gdzie nie znamy, ani roku, ani wydawcy
+head(levels(game_sales$Name), n = 12)
+game_sales <- read.csv("C:/Users/Michc/Dropbox/Uczelnia/Semestr 5/Projekt z analizy danych/Projekt/dane/video_games.csv",na.strings = "N/A") #spoko ale do analizy, nie do modelu
+#zmiana typu danych z char na factor
+game_sales$Name <- as.factor(game_sales$Name)
+game_sales$Platform <- as.factor(game_sales$Platform)
+game_sales$Genre <- as.factor(game_sales$Genre)
+game_sales$Publisher <- as.factor(game_sales$Publisher)
+#zamiana roku produkcji z char na numeric
+game_sales$Year <- as.numeric(game_sales$Year)
+#zmiana "unknown" na NA
+game_sales[which(game_sales$Publisher=="Unknown"),6] <- NA
+#zestawienie braków danych z podziałem na kolumny
+kbl(tibble(Rank=sum(is.na(game_sales$Rank)),
+Name=sum(is.na(game_sales$Name)),
+Platform=sum(is.na(game_sales$Platform)),
+Year=sum(is.na(game_sales$Year)),
+Genre=sum(is.na(game_sales$Genre)),
+Publisher=sum(is.na(game_sales$Publisher)),
+NA_Sales=sum(is.na(game_sales$NA_Sales)),
+EU_Sales=sum(is.na(game_sales$EU_Sales)),
+JP_Sales=sum(is.na(game_sales$JP_Sales)),
+Other_sales=sum(is.na(game_sales$Other_Sales)),
+Global_Sales=sum(is.na(game_sales$Global_Sales))), table.attr = "style = \"color: black;\"",
+caption = "<span style='font-size:37px'>Zestawienie braków danych z podziałem na kolumny</span>") %>%
+kable_styling("striped", full_width = T)
+count(game_sales[which(is.na(game_sales$Year) & is.na(game_sales$Publisher)),]) #125 takich obserwacji, gdzie nie znamy, ani roku, ani wydawcy
+head(levels(game_sales$Name), n = 12)
+spec_***
+kbl(tibble(Rank=sum(is.na(game_sales$Rank)),
+Name=sum(is.na(game_sales$Name)),
+Platform=sum(is.na(game_sales$Platform)),
+Year=sum(is.na(game_sales$Year)),
+Genre=sum(is.na(game_sales$Genre)),
+Publisher=sum(is.na(game_sales$Publisher)),
+NA_Sales=sum(is.na(game_sales$NA_Sales)),
+EU_Sales=sum(is.na(game_sales$EU_Sales)),
+JP_Sales=sum(is.na(game_sales$JP_Sales)),
+Other_sales=sum(is.na(game_sales$Other_Sales)),
+Global_Sales=sum(is.na(game_sales$Global_Sales)),
+'Year & Publisher'=count(game_sales[which(is.na(game_sales$Year) & is.na(game_sales$Publisher)),])), table.attr = "style = \"color: black;\"",
+caption = "<span style='font-size:37px'>Zestawienie braków danych z podziałem na kolumny</span>") %>%
+kable_styling("striped", full_width = T,position = "left") %>%
+column_spec(c(4,6), color = "red") %>%
+column_spec(12, color = "orange") %>%
+column_spec(1:11-c(4,6), color = "lime")
+kbl(tibble(Rank=sum(is.na(game_sales$Rank)),
+Name=sum(is.na(game_sales$Name)),
+Platform=sum(is.na(game_sales$Platform)),
+Year=sum(is.na(game_sales$Year)),
+Genre=sum(is.na(game_sales$Genre)),
+Publisher=sum(is.na(game_sales$Publisher)),
+NA_Sales=sum(is.na(game_sales$NA_Sales)),
+EU_Sales=sum(is.na(game_sales$EU_Sales)),
+JP_Sales=sum(is.na(game_sales$JP_Sales)),
+Other_sales=sum(is.na(game_sales$Other_Sales)),
+Global_Sales=sum(is.na(game_sales$Global_Sales)),
+'Year & Publisher'=count(game_sales[which(is.na(game_sales$Year) & is.na(game_sales$Publisher)),])), table.attr = "style = \"color: black;\"",
+caption = "<span style='font-size:37px'>Zestawienie braków danych z podziałem na kolumny</span>") %>%
+kable_styling("striped", full_width = T,position = "left") %>%
+column_spec(c(4,6), color = "red") %>%
+column_spec(12, color = "orange") %>%
+column_spec(1:11-c(4,6), color = "green")
+kbl(tibble(Rank=sum(is.na(game_sales$Rank)),
+Name=sum(is.na(game_sales$Name)),
+Platform=sum(is.na(game_sales$Platform)),
+Year=sum(is.na(game_sales$Year)),
+Genre=sum(is.na(game_sales$Genre)),
+Publisher=sum(is.na(game_sales$Publisher)),
+NA_Sales=sum(is.na(game_sales$NA_Sales)),
+EU_Sales=sum(is.na(game_sales$EU_Sales)),
+JP_Sales=sum(is.na(game_sales$JP_Sales)),
+Other_sales=sum(is.na(game_sales$Other_Sales)),
+Global_Sales=sum(is.na(game_sales$Global_Sales)),
+'Year & Publisher'=count(game_sales[which(is.na(game_sales$Year) & is.na(game_sales$Publisher)),])), table.attr = "style = \"color: black;\"",
+caption = "<span style='font-size:37px'>Zestawienie braków danych z podziałem na kolumny</span>") %>%
+kable_styling("striped", full_width = T,position = "left") %>%
+column_spec(c(4,6), color = "red") %>%
+column_spec(12, color = "orange") %>%
+column_spec(c(1:3,5,6:11), color = "green")
+View(game_sales)
+#zestawienie braków danych z podziałem na kolumny
+kbl(tibble(Rank=sum(is.na(game_sales$Rank)),
+Name=sum(is.na(game_sales$Name)),
+Platform=sum(is.na(game_sales$Platform)),
+Year=sum(is.na(game_sales$Year)),
+Genre=sum(is.na(game_sales$Genre)),
+Publisher=sum(is.na(game_sales$Publisher)),
+NA_Sales=sum(is.na(game_sales$NA_Sales)),
+EU_Sales=sum(is.na(game_sales$EU_Sales)),
+JP_Sales=sum(is.na(game_sales$JP_Sales)),
+Other_sales=sum(is.na(game_sales$Other_Sales)),
+Global_Sales=sum(is.na(game_sales$Global_Sales)),
+'Year & Publisher'=count(game_sales[which(is.na(game_sales$Year) & is.na(game_sales$Publisher)),])), table.attr = "style = \"color: black;\"",
+caption = "<left><span style='font-size:30px'>Zestawienie braków danych z podziałem na zmienne</span><left>") %>%
+kable_styling("striped", full_width = T,position = "left") %>%
+column_spec(c(4,6), color = "red") %>%
+column_spec(12, color = "orange") %>%
+column_spec(c(1:3,5,7:11), color = "green")
+#kbl(tibble('Year & Publisher'=count(game_sales[which(is.na(game_sales$Year) & is.na(game_sales$Publisher)),]))) %>%
+#  kable_styling("striped", full_width = F)
+#count(game_sales[which(is.na(game_sales$Year) & is.na(game_sales$Publisher)),]) #125 takich obserwacji, gdzie nie znamy, ani roku, ani wydawcy
+#zestawienie braków danych z podziałem na kolumny
+kbl(tibble(Rank=sum(is.na(game_sales$Rank)),
+Name=sum(is.na(game_sales$Name)),
+Platform=sum(is.na(game_sales$Platform)),
+Year=sum(is.na(game_sales$Year)),
+Genre=sum(is.na(game_sales$Genre)),
+Publisher=sum(is.na(game_sales$Publisher)),
+NA_Sales=sum(is.na(game_sales$NA_Sales)),
+EU_Sales=sum(is.na(game_sales$EU_Sales)),
+JP_Sales=sum(is.na(game_sales$JP_Sales)),
+Other_sales=sum(is.na(game_sales$Other_Sales)),
+Global_Sales=sum(is.na(game_sales$Global_Sales)),
+'Year & Publisher'=count(game_sales[which(is.na(game_sales$Year) & is.na(game_sales$Publisher)),])), table.attr = "style = \"color: black;\""
+#,caption = "<span style='font-size:30px'>Zestawienie braków danych z podziałem na zmienne</span>"
+) %>%
+kable_styling("striped", full_width = T,position = "float_left") %>%
+column_spec(c(4,6), color = "red") %>%
+column_spec(12, color = "orange") %>%
+column_spec(c(1:3,5,7:11), color = "green")
+#kbl(tibble('Year & Publisher'=count(game_sales[which(is.na(game_sales$Year) & is.na(game_sales$Publisher)),]))) %>%
+#  kable_styling("striped", full_width = F)
+#count(game_sales[which(is.na(game_sales$Year) & is.na(game_sales$Publisher)),]) #125 takich obserwacji, gdzie nie znamy, ani roku, ani wydawcy
+unnest_tokens(levels(game_sales$Name))
+library(tidyverse)
+library(kableExtra)
+unnest_tokens(levels(game_sales$Name))
+install.packages("tidytext")
+count(tidytext::unnest_tokens(levels(game_sales$Name)))
+count(tidytext::unnest_tokens(tibble(levels(game_sales$Name))))
+count(tidytext::unnest_auto(levels(game_sales$Name)))
+count(tidyr::unnest_auto(levels(game_sales$Name)))
+levels(game_sales$Name)
+tibble(levels(game_sales$Name))
+tidytext::unnest_tokens(tibble(levels(game_sales$Name)))
+tidytext::unnest_tokens(data.frame(levels(game_sales$Name)))

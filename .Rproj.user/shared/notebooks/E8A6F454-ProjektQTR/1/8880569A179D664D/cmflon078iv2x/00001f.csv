@@ -1,0 +1,8 @@
+"0","las <- randomForest::randomForest(Global_Sales~.
+                           ,data=g_s[index,]
+                           ,xtest=g_s[-index,]
+                           ,ytest=g_s[-index,])
+"
+"2","Error in eval(predvars, data, env) : 
+  object 'Publisher_10TACLE Studios' not found
+"
