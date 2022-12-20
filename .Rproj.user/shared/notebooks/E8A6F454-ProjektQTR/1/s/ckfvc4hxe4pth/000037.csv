@@ -1,0 +1,11 @@
+"0",""
+"0","rf_best_param <- select_best(rf_res, metric = ""rmse"")"
+"0",""
+"0","rf_final <- "
+"0",""
+"0","rf_fit <- rf_final %>%"
+"0","  last_fit(sales_split, metrics = meas)"
+"2","[33m![39m [33mtrain/test split: preprocessor 1/1, model 1/1: 8 columns were requested but there were 4 predictors in the data. 4 will be used.[39m
+"
+"0","rf_fit %>%"
+"0","  collect_metrics()"

@@ -1,0 +1,8 @@
+"0",""
+"0","rf_fit %>%"
+"0","  collect_predictions() %>%"
+"0","  select(.pred, Global_Sales) %>%"
+"0","  ggplot(aes(.pred, Global_Sales)) +"
+"0","  geom_jitter(width = 0, alpha = 0.05) +"
+"0","  geom_smooth(method = lm, "
+"0","              se = F)"

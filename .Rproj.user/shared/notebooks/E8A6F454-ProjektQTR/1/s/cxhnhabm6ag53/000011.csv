@@ -1,0 +1,5 @@
+"0",""
+"0","#kbl(tibble('Year & Publisher'=count(game_sales[which(is.na(game_sales$Year) & is.na(game_sales$Publisher)),]))) %>%"
+"0","#  kable_styling(""striped"", full_width = F)"
+"0",""
+"0","#count(game_sales[which(is.na(game_sales$Year) & is.na(game_sales$Publisher)),]) #125 takich obserwacji, gdzie nie znamy, ani roku, ani wydawcy"

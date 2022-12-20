@@ -483,3 +483,89 @@ collect_predictions(sales_fit) %>%
 
 ```
 
+# M-method random forset model
+
+```{r}
+rec <- recipe(Global_Sales ~ Platform + Genre + Publisher + Year,
+              data = sales_train) %>%
+  step_normalize(all_numeric_predictors())
+
+rf <- rand_forest(
+  mtry = tune(),
+  trees = tune(),
+  min_n = tune()
+) %>%
+  set_mode("regression") %>%
+  set_engine("ranger", importance = "impurity")
+
+params <- extract_parameter_set_dials(rf)
+params <- finalize(params, sales_train)
+
+rs <- vfold_cv(sales_train, v = 5)
+
+meas <- metric_set(rsq, rmse, mae)
+
+grid <- grid_latin_hypercube(params, size = 10)
+grid %>%
+  flextable::flextable()
+
+rf_wf <- workflow() %>%
+  add_recipe(rec) %>%
+  add_model(rf)
+
+library(doParallel)
+registerDoParallel(cores = 4)
+rf_res <-
+  rf_wf %>%
+  tune_grid(
+    resamples = rs,
+    grid = grid,
+    metrics = meas
+)
+
+rf_res %>%
+  collect_metrics() %>%
+  flextable::flextable()
+
+rf_res %>%
+  show_best(metric = "rsq")
+
+rf_res %>%
+  show_best(metric = "rmse")
+
+rf_res %>% 
+  show_best(metric = "mae")
+
+autoplot(rf_res)
+
+rf_best_param <- select_best(rf_res, metric = "rmse")
+
+rf_final <- 
+  rf_wf %>%
+  finalize_workflow(rf_best_param)
+
+rf_fit <- rf_final %>%
+  last_fit(sales_split, metrics = meas)
+
+rf_fit %>%
+  collect_metrics()
+
+rf_fit %>%
+  collect_predictions() %>%
+  select(.pred, Global_Sales) %>%
+  head(n = 20) %>%
+  flextable::flextable()
+
+rf_fit %>%
+  collect_predictions() %>%
+  select(.pred, Global_Sales) %>%
+  ggplot(aes(.pred, Global_Sales)) +
+  geom_jitter(width = 0, alpha = 0.05) +
+  geom_smooth(method = lm, 
+              se = F)
+```
+
+
+
+
+
