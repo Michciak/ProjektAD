@@ -8,6 +8,7 @@ format:
     toc: true
     toc-depth: 3
     theme: pulse
+    # self-contained: true
 date: "`r Sys.Date()`"
 ---
 
@@ -124,7 +125,7 @@ ___
 
 ```{r wczytanie danych}
 
-game_sales <- read.csv("C:/Users/Michc/Dropbox/Uczelnia/Semestr 5/Projekt z analizy danych/Projekt/dane/video_games.csv",na.strings = "N/A") #spoko ale do analizy, nie do modelu
+game_sales <- read.csv("C:/Users/Michc/Dropbox/Uczelnia/Semestr 5/Projekt z analizy danych/Projekt/dane/video_games.csv",na.strings = "N/A") 
 
 ```
 
@@ -449,10 +450,14 @@ ranger_workflow <-
   add_model(ranger_spec) 
 
 set.seed(40409)
-ranger_tune <-
-  tune_grid(ranger_workflow, 
-            resamples = sales_folds, 
-            grid = 11)
+# library(doParallel)
+# registerDoParallel(cores = 8)
+#save(ranger_tune,file = "dane/ranger_tune.rda")
+load("dane/ranger_tune.rda")
+# ranger_tune <-
+#   tune_grid(ranger_workflow, 
+#             resamples = sales_folds, 
+#             grid = 11)
 ```
 
 ```{r}
@@ -513,15 +518,15 @@ rf_wf <- workflow() %>%
   add_recipe(rec) %>%
   add_model(rf)
 
-library(doParallel)
-registerDoParallel(cores = 4)
-rf_res <-
-  rf_wf %>%
-  tune_grid(
-    resamples = rs,
-    grid = grid,
-    metrics = meas
-)
+#save(rf_res,file="dane/rf_res.rda")
+load("dane/rf_res.rda")
+# rf_res <-
+#   rf_wf %>%
+#   tune_grid(
+#     resamples = rs,
+#     grid = grid,
+#     metrics = meas
+# )
 
 rf_res %>%
   collect_metrics() %>%

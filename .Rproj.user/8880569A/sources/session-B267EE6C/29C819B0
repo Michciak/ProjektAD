@@ -3,7 +3,7 @@
     "path": "C:/Users/Michc/Dropbox/Uczelnia/Semestr 5/Projekt z analizy danych/Projekt/ProjektQTR.qmd",
     "project_path": "ProjektQTR.qmd",
     "type": "quarto_markdown",
-    "hash": "2829968353",
+    "hash": "817278861",
     "contents": "",
     "dirty": false,
     "created": 1671100608326.0,
@@ -12,16 +12,16 @@
     "properties": {
         "source_window_id": "",
         "Source": "Source",
-        "cursorPosition": "488,64",
-        "scrollLine": "484",
+        "cursorPosition": "127,141",
+        "scrollLine": "114",
         "docOutlineVisible": "1"
     },
     "folds": "",
-    "lastKnownWriteTime": 1671537146,
+    "lastKnownWriteTime": 1671886446,
     "encoding": "UTF-8",
     "collab_server": "",
     "source_window": "",
-    "last_content_update": 1671537146826,
+    "last_content_update": 1671886446732,
     "read_only": false,
     "read_only_alternatives": []
 }

@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Michał Koziński">
-<meta name="dcterms.date" content="2022-12-01">
+<meta name="dcterms.date" content="2022-12-24">
 
 <title>Analiza sprzedaży gier komputerowych 1980-2016</title>
 <style>
@@ -101,6 +101,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 <script src="ProjektQTR_files/libs/kePrint-0.0.1/kePrint.js"></script>
 <link href="ProjektQTR_files/libs/lightable-0.0.1/lightable.css" rel="stylesheet">
+<link href="ProjektQTR_files/libs/tabwid-1.1.2/tabwid.css" rel="stylesheet">
 
 
 </head>
@@ -132,6 +133,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   <li><a href="#dane-kategoryczne" id="toc-dane-kategoryczne" class="nav-link" data-scroll-target="#dane-kategoryczne">Dane kategoryczne</a></li>
   </ul></li>
   <li><a href="#model-predykcyjny---las-losowy" id="toc-model-predykcyjny---las-losowy" class="nav-link" data-scroll-target="#model-predykcyjny---las-losowy">Model predykcyjny - LaS lOsOwY</a></li>
+  <li><a href="#model-predykcyjny---tidymodels" id="toc-model-predykcyjny---tidymodels" class="nav-link" data-scroll-target="#model-predykcyjny---tidymodels">Model predykcyjny - <code>TidyModels</code></a></li>
+  <li><a href="#m-method-random-forset-model" id="toc-m-method-random-forset-model" class="nav-link" data-scroll-target="#m-method-random-forset-model">M-method random forset model</a></li>
   </ul>
 </nav>
 </div>
@@ -157,7 +160,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">December 1, 2022</p>
+      <p class="date">December 24, 2022</p>
     </div>
   </div>
     
@@ -1703,6 +1706,363 @@ logiczną: zwracanie wartości NA</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] NA</code></pre>
+</div>
+</div>
+</section>
+<section id="model-predykcyjny---tidymodels" class="level1">
+<h1>Model predykcyjny - <code>TidyModels</code></h1>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidymodels)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: pakiet 'tidymodels' został zbudowany w wersji R 4.2.2</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>── Attaching packages ────────────────────────────────────── tidymodels 1.0.0 ──</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>✔ broom        1.0.1     ✔ rsample      1.1.0
+✔ dials        1.1.0     ✔ tune         1.0.1
+✔ infer        1.0.4     ✔ workflows    1.1.2
+✔ modeldata    1.0.1     ✔ workflowsets 1.0.0
+✔ parsnip      1.0.3     ✔ yardstick    1.1.0
+✔ recipes      1.0.2     </code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: pakiet 'dials' został zbudowany w wersji R 4.2.2</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: pakiet 'infer' został zbudowany w wersji R 4.2.2</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: pakiet 'modeldata' został zbudowany w wersji R 4.2.2</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: pakiet 'parsnip' został zbudowany w wersji R 4.2.2</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: pakiet 'recipes' został zbudowany w wersji R 4.2.2</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: pakiet 'rsample' został zbudowany w wersji R 4.2.2</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: pakiet 'tune' został zbudowany w wersji R 4.2.2</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: pakiet 'workflows' został zbudowany w wersji R 4.2.2</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: pakiet 'workflowsets' został zbudowany w wersji R 4.2.2</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: pakiet 'yardstick' został zbudowany w wersji R 4.2.2</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>── Conflicts ───────────────────────────────────────── tidymodels_conflicts() ──
+✖ scales::discard()        masks purrr::discard()
+✖ dplyr::filter()          masks stats::filter()
+✖ recipes::fixed()         masks stringr::fixed()
+✖ kableExtra::group_rows() masks dplyr::group_rows()
+✖ dplyr::lag()             masks stats::lag()
+✖ yardstick::spec()        masks readr::spec()
+✖ recipes::step()          masks stats::step()
+• Use tidymodels_prefer() to resolve common conflicts.</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1410</span>)</span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>game_s <span class="ot">&lt;-</span> <span class="fu">na.omit</span>(game_sales)</span>
+<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a>sales_split <span class="ot">&lt;-</span> <span class="fu">initial_split</span>(game_s, <span class="at">strata =</span> Global_Sales)</span>
+<span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a>sales_train <span class="ot">&lt;-</span> <span class="fu">training</span>(sales_split)</span>
+<span id="cb44-5"><a href="#cb44-5" aria-hidden="true" tabindex="-1"></a>sales_test <span class="ot">&lt;-</span> <span class="fu">testing</span>(sales_split)</span>
+<span id="cb44-6"><a href="#cb44-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-7"><a href="#cb44-7" aria-hidden="true" tabindex="-1"></a>sales_folds <span class="ot">&lt;-</span> <span class="fu">vfold_cv</span>(sales_train, <span class="at">strata =</span> Global_Sales)</span>
+<span id="cb44-8"><a href="#cb44-8" aria-hidden="true" tabindex="-1"></a>sales_folds</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#  10-fold cross-validation using stratification 
+# A tibble: 10 × 2
+   splits               id    
+   &lt;list&gt;               &lt;chr&gt; 
+ 1 &lt;split [10925/1217]&gt; Fold01
+ 2 &lt;split [10927/1215]&gt; Fold02
+ 3 &lt;split [10928/1214]&gt; Fold03
+ 4 &lt;split [10928/1214]&gt; Fold04
+ 5 &lt;split [10928/1214]&gt; Fold05
+ 6 &lt;split [10928/1214]&gt; Fold06
+ 7 &lt;split [10928/1214]&gt; Fold07
+ 8 &lt;split [10928/1214]&gt; Fold08
+ 9 &lt;split [10929/1213]&gt; Fold09
+10 &lt;split [10929/1213]&gt; Fold10</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(usemodels)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: pakiet 'usemodels' został zbudowany w wersji R 4.2.2</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="fu">use_ranger</span>(Global_Sales <span class="sc">~</span> Platform<span class="sc">+</span>Genre<span class="sc">+</span>Publisher<span class="sc">+</span>Year, <span class="at">data =</span> sales_train)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>ranger_recipe &lt;- 
+  recipe(formula = Global_Sales ~ Platform + Genre + Publisher + Year, data = sales_train) 
+
+ranger_spec &lt;- 
+  rand_forest(mtry = tune(), min_n = tune(), trees = 1000) %&gt;% 
+  set_mode("regression") %&gt;% 
+  set_engine("ranger") 
+
+ranger_workflow &lt;- 
+  workflow() %&gt;% 
+  add_recipe(ranger_recipe) %&gt;% 
+  add_model(ranger_spec) 
+
+set.seed(6164)
+ranger_tune &lt;-
+  tune_grid(ranger_workflow, resamples = stop("add your rsample object"), grid = stop("add number of candidate points"))</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(textrecipes)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: pakiet 'textrecipes' został zbudowany w wersji R 4.2.2</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a>ranger_recipe <span class="ot">&lt;-</span> </span>
+<span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">recipe</span>(<span class="at">formula =</span> Global_Sales <span class="sc">~</span> Platform <span class="sc">+</span> Genre <span class="sc">+</span> Publisher <span class="sc">+</span> Year, <span class="at">data =</span> sales_train) </span>
+<span id="cb52-3"><a href="#cb52-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-4"><a href="#cb52-4" aria-hidden="true" tabindex="-1"></a>ranger_spec <span class="ot">&lt;-</span> </span>
+<span id="cb52-5"><a href="#cb52-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rand_forest</span>(<span class="at">mtry =</span> <span class="fu">tune</span>(), <span class="at">min_n =</span> <span class="fu">tune</span>(), <span class="at">trees =</span> <span class="dv">1000</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb52-6"><a href="#cb52-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_mode</span>(<span class="st">"regression"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb52-7"><a href="#cb52-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_engine</span>(<span class="st">"ranger"</span>) </span>
+<span id="cb52-8"><a href="#cb52-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-9"><a href="#cb52-9" aria-hidden="true" tabindex="-1"></a>ranger_workflow <span class="ot">&lt;-</span> </span>
+<span id="cb52-10"><a href="#cb52-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">workflow</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb52-11"><a href="#cb52-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_recipe</span>(ranger_recipe) <span class="sc">%&gt;%</span> </span>
+<span id="cb52-12"><a href="#cb52-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_model</span>(ranger_spec) </span>
+<span id="cb52-13"><a href="#cb52-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-14"><a href="#cb52-14" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">40409</span>)</span>
+<span id="cb52-15"><a href="#cb52-15" aria-hidden="true" tabindex="-1"></a><span class="co"># library(doParallel)</span></span>
+<span id="cb52-16"><a href="#cb52-16" aria-hidden="true" tabindex="-1"></a><span class="co"># registerDoParallel(cores = 8)</span></span>
+<span id="cb52-17"><a href="#cb52-17" aria-hidden="true" tabindex="-1"></a><span class="co">#save(ranger_tune,file = "dane/ranger_tune.rda")</span></span>
+<span id="cb52-18"><a href="#cb52-18" aria-hidden="true" tabindex="-1"></a><span class="fu">load</span>(<span class="st">"dane/ranger_tune.rda"</span>)</span>
+<span id="cb52-19"><a href="#cb52-19" aria-hidden="true" tabindex="-1"></a><span class="co"># ranger_tune &lt;-</span></span>
+<span id="cb52-20"><a href="#cb52-20" aria-hidden="true" tabindex="-1"></a><span class="co">#   tune_grid(ranger_workflow, </span></span>
+<span id="cb52-21"><a href="#cb52-21" aria-hidden="true" tabindex="-1"></a><span class="co">#             resamples = sales_folds, </span></span>
+<span id="cb52-22"><a href="#cb52-22" aria-hidden="true" tabindex="-1"></a><span class="co">#             grid = 11)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a><span class="fu">show_best</span>(ranger_tune, <span class="at">metric =</span> <span class="st">"rmse"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 5 × 8
+   mtry min_n .metric .estimator  mean     n std_err .config              
+  &lt;int&gt; &lt;int&gt; &lt;chr&gt;   &lt;chr&gt;      &lt;dbl&gt; &lt;int&gt;   &lt;dbl&gt; &lt;chr&gt;                
+1     2    34 rmse    standard    1.37    10   0.157 Preprocessor1_Model04
+2     2    37 rmse    standard    1.37    10   0.158 Preprocessor1_Model06
+3     2    28 rmse    standard    1.37    10   0.157 Preprocessor1_Model01
+4     2    22 rmse    standard    1.37    10   0.156 Preprocessor1_Model03
+5     4    26 rmse    standard    1.38    10   0.157 Preprocessor1_Model10</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb55"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a><span class="fu">show_best</span>(ranger_tune, <span class="at">metric =</span> <span class="st">"rsq"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 5 × 8
+   mtry min_n .metric .estimator  mean     n std_err .config              
+  &lt;int&gt; &lt;int&gt; &lt;chr&gt;   &lt;chr&gt;      &lt;dbl&gt; &lt;int&gt;   &lt;dbl&gt; &lt;chr&gt;                
+1     2    34 rsq     standard   0.162    10  0.0134 Preprocessor1_Model04
+2     2    28 rsq     standard   0.162    10  0.0136 Preprocessor1_Model01
+3     2    37 rsq     standard   0.161    10  0.0132 Preprocessor1_Model06
+4     2    22 rsq     standard   0.161    10  0.0137 Preprocessor1_Model03
+5     4    26 rsq     standard   0.158    10  0.0161 Preprocessor1_Model10</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb57"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a><span class="fu">autoplot</span>(ranger_tune)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="ProjektQTR_files/figure-html/unnamed-chunk-14-1.png" class="img-fluid" width="672"></p>
+</div>
+<div class="sourceCode cell-code" id="cb58"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a>final_rf <span class="ot">&lt;-</span> ranger_workflow <span class="sc">%&gt;%</span></span>
+<span id="cb58-2"><a href="#cb58-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">finalize_workflow</span>(<span class="fu">select_best</span>(ranger_tune))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: No value of `metric` was given; metric 'rmse' will be used.</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb60"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a>final_rf</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>══ Workflow ════════════════════════════════════════════════════════════════════
+Preprocessor: Recipe
+Model: rand_forest()
+
+── Preprocessor ────────────────────────────────────────────────────────────────
+0 Recipe Steps
+
+── Model ───────────────────────────────────────────────────────────────────────
+Random Forest Model Specification (regression)
+
+Main Arguments:
+  mtry = 2
+  trees = 1000
+  min_n = 34
+
+Computational engine: ranger </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb62"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb62-1"><a href="#cb62-1" aria-hidden="true" tabindex="-1"></a>sales_fit <span class="ot">&lt;-</span> <span class="fu">last_fit</span>(final_rf,sales_split)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: pakiet 'ranger' został zbudowany w wersji R 4.2.2</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb64"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb64-1"><a href="#cb64-1" aria-hidden="true" tabindex="-1"></a>sales_fit</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># Resampling results
+# Manual resampling 
+# A tibble: 1 × 6
+  splits               id               .metrics .notes   .predicti…¹ .workflow 
+  &lt;list&gt;               &lt;chr&gt;            &lt;list&gt;   &lt;list&gt;   &lt;list&gt;      &lt;list&gt;    
+1 &lt;split [12142/4049]&gt; train/test split &lt;tibble&gt; &lt;tibble&gt; &lt;tibble&gt;    &lt;workflow&gt;
+# … with abbreviated variable name ¹​.predictions</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb66"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb66-1"><a href="#cb66-1" aria-hidden="true" tabindex="-1"></a><span class="fu">collect_metrics</span>(sales_fit)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 2 × 4
+  .metric .estimator .estimate .config             
+  &lt;chr&gt;   &lt;chr&gt;          &lt;dbl&gt; &lt;chr&gt;               
+1 rmse    standard       1.78  Preprocessor1_Model1
+2 rsq     standard       0.130 Preprocessor1_Model1</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb68"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb68-1"><a href="#cb68-1" aria-hidden="true" tabindex="-1"></a><span class="fu">collect_predictions</span>(sales_fit) <span class="sc">%&gt;%</span></span>
+<span id="cb68-2"><a href="#cb68-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(Global_Sales, .pred)) <span class="sc">+</span></span>
+<span id="cb68-3"><a href="#cb68-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_abline</span>(<span class="at">lty =</span> <span class="dv">2</span>, <span class="at">color =</span> <span class="st">"gray50"</span>) <span class="sc">+</span></span>
+<span id="cb68-4"><a href="#cb68-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">alpha =</span> <span class="fl">0.5</span>, <span class="at">color =</span> <span class="st">"midnightblue"</span>) <span class="sc">+</span></span>
+<span id="cb68-5"><a href="#cb68-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_fixed</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="ProjektQTR_files/figure-html/unnamed-chunk-15-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+<section id="m-method-random-forset-model" class="level1">
+<h1>M-method random forset model</h1>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb69"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb69-1"><a href="#cb69-1" aria-hidden="true" tabindex="-1"></a>rec <span class="ot">&lt;-</span> <span class="fu">recipe</span>(Global_Sales <span class="sc">~</span> Platform <span class="sc">+</span> Genre <span class="sc">+</span> Publisher <span class="sc">+</span> Year,</span>
+<span id="cb69-2"><a href="#cb69-2" aria-hidden="true" tabindex="-1"></a>              <span class="at">data =</span> sales_train) <span class="sc">%&gt;%</span></span>
+<span id="cb69-3"><a href="#cb69-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_normalize</span>(<span class="fu">all_numeric_predictors</span>())</span>
+<span id="cb69-4"><a href="#cb69-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb69-5"><a href="#cb69-5" aria-hidden="true" tabindex="-1"></a>rf <span class="ot">&lt;-</span> <span class="fu">rand_forest</span>(</span>
+<span id="cb69-6"><a href="#cb69-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">mtry =</span> <span class="fu">tune</span>(),</span>
+<span id="cb69-7"><a href="#cb69-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">trees =</span> <span class="fu">tune</span>(),</span>
+<span id="cb69-8"><a href="#cb69-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">min_n =</span> <span class="fu">tune</span>()</span>
+<span id="cb69-9"><a href="#cb69-9" aria-hidden="true" tabindex="-1"></a>) <span class="sc">%&gt;%</span></span>
+<span id="cb69-10"><a href="#cb69-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_mode</span>(<span class="st">"regression"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb69-11"><a href="#cb69-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_engine</span>(<span class="st">"ranger"</span>, <span class="at">importance =</span> <span class="st">"impurity"</span>)</span>
+<span id="cb69-12"><a href="#cb69-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb69-13"><a href="#cb69-13" aria-hidden="true" tabindex="-1"></a>params <span class="ot">&lt;-</span> <span class="fu">extract_parameter_set_dials</span>(rf)</span>
+<span id="cb69-14"><a href="#cb69-14" aria-hidden="true" tabindex="-1"></a>params <span class="ot">&lt;-</span> <span class="fu">finalize</span>(params, sales_train)</span>
+<span id="cb69-15"><a href="#cb69-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb69-16"><a href="#cb69-16" aria-hidden="true" tabindex="-1"></a>rs <span class="ot">&lt;-</span> <span class="fu">vfold_cv</span>(sales_train, <span class="at">v =</span> <span class="dv">5</span>)</span>
+<span id="cb69-17"><a href="#cb69-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb69-18"><a href="#cb69-18" aria-hidden="true" tabindex="-1"></a>meas <span class="ot">&lt;-</span> <span class="fu">metric_set</span>(rsq, rmse, mae)</span>
+<span id="cb69-19"><a href="#cb69-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb69-20"><a href="#cb69-20" aria-hidden="true" tabindex="-1"></a>grid <span class="ot">&lt;-</span> <span class="fu">grid_latin_hypercube</span>(params, <span class="at">size =</span> <span class="dv">10</span>)</span>
+<span id="cb69-21"><a href="#cb69-21" aria-hidden="true" tabindex="-1"></a>grid <span class="sc">%&gt;%</span></span>
+<span id="cb69-22"><a href="#cb69-22" aria-hidden="true" tabindex="-1"></a>  flextable<span class="sc">::</span><span class="fu">flextable</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+
+<div class="tabwid"><style>.cl-9ae72cf0{}.cl-9adb36f2{font-family:'Arial';font-size:11pt;font-weight:normal;font-style:normal;text-decoration:none;color:rgba(0, 0, 0, 1.00);background-color:transparent;}.cl-9ae04fca{margin:0;text-align:right;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);padding-bottom:5pt;padding-top:5pt;padding-left:5pt;padding-right:5pt;line-height: 1;background-color:transparent;}.cl-9ae07270{width:0.75in;background-color:transparent;vertical-align: middle;border-bottom: 2pt solid rgba(102, 102, 102, 1.00);border-top: 2pt solid rgba(102, 102, 102, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-9ae0727a{width:0.75in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-9ae07284{width:0.75in;background-color:transparent;vertical-align: middle;border-bottom: 2pt solid rgba(102, 102, 102, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}</style><table class="cl-9ae72cf0"><thead><tr style="overflow-wrap:break-word;"><th class="cl-9ae07270"><p class="cl-9ae04fca"><span class="cl-9adb36f2">mtry</span></p></th><th class="cl-9ae07270"><p class="cl-9ae04fca"><span class="cl-9adb36f2">trees</span></p></th><th class="cl-9ae07270"><p class="cl-9ae04fca"><span class="cl-9adb36f2">min_n</span></p></th></tr></thead><tbody><tr style="overflow-wrap:break-word;"><td class="cl-9ae0727a"><p class="cl-9ae04fca"><span class="cl-9adb36f2">4</span></p></td><td class="cl-9ae0727a"><p class="cl-9ae04fca"><span class="cl-9adb36f2">1,097</span></p></td><td class="cl-9ae0727a"><p class="cl-9ae04fca"><span class="cl-9adb36f2">26</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-9ae0727a"><p class="cl-9ae04fca"><span class="cl-9adb36f2">6</span></p></td><td class="cl-9ae0727a"><p class="cl-9ae04fca"><span class="cl-9adb36f2">559</span></p></td><td class="cl-9ae0727a"><p class="cl-9ae04fca"><span class="cl-9adb36f2">33</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-9ae0727a"><p class="cl-9ae04fca"><span class="cl-9adb36f2">2</span></p></td><td class="cl-9ae0727a"><p class="cl-9ae04fca"><span class="cl-9adb36f2">628</span></p></td><td class="cl-9ae0727a"><p class="cl-9ae04fca"><span class="cl-9adb36f2">39</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-9ae0727a"><p class="cl-9ae04fca"><span class="cl-9adb36f2">6</span></p></td><td class="cl-9ae0727a"><p class="cl-9ae04fca"><span class="cl-9adb36f2">1,956</span></p></td><td class="cl-9ae0727a"><p class="cl-9ae04fca"><span class="cl-9adb36f2">12</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-9ae0727a"><p class="cl-9ae04fca"><span class="cl-9adb36f2">2</span></p></td><td class="cl-9ae0727a"><p class="cl-9ae04fca"><span class="cl-9adb36f2">977</span></p></td><td class="cl-9ae0727a"><p class="cl-9ae04fca"><span class="cl-9adb36f2">22</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-9ae0727a"><p class="cl-9ae04fca"><span class="cl-9adb36f2">8</span></p></td><td class="cl-9ae0727a"><p class="cl-9ae04fca"><span class="cl-9adb36f2">1,298</span></p></td><td class="cl-9ae0727a"><p class="cl-9ae04fca"><span class="cl-9adb36f2">19</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-9ae0727a"><p class="cl-9ae04fca"><span class="cl-9adb36f2">11</span></p></td><td class="cl-9ae0727a"><p class="cl-9ae04fca"><span class="cl-9adb36f2">308</span></p></td><td class="cl-9ae0727a"><p class="cl-9ae04fca"><span class="cl-9adb36f2">32</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-9ae0727a"><p class="cl-9ae04fca"><span class="cl-9adb36f2">8</span></p></td><td class="cl-9ae0727a"><p class="cl-9ae04fca"><span class="cl-9adb36f2">63</span></p></td><td class="cl-9ae0727a"><p class="cl-9ae04fca"><span class="cl-9adb36f2">15</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-9ae0727a"><p class="cl-9ae04fca"><span class="cl-9adb36f2">4</span></p></td><td class="cl-9ae0727a"><p class="cl-9ae04fca"><span class="cl-9adb36f2">1,705</span></p></td><td class="cl-9ae0727a"><p class="cl-9ae04fca"><span class="cl-9adb36f2">7</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-9ae07284"><p class="cl-9ae04fca"><span class="cl-9adb36f2">10</span></p></td><td class="cl-9ae07284"><p class="cl-9ae04fca"><span class="cl-9adb36f2">1,448</span></p></td><td class="cl-9ae07284"><p class="cl-9ae04fca"><span class="cl-9adb36f2">4</span></p></td></tr></tbody></table></div>
+</div>
+<div class="sourceCode cell-code" id="cb70"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb70-1"><a href="#cb70-1" aria-hidden="true" tabindex="-1"></a>rf_wf <span class="ot">&lt;-</span> <span class="fu">workflow</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb70-2"><a href="#cb70-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_recipe</span>(rec) <span class="sc">%&gt;%</span></span>
+<span id="cb70-3"><a href="#cb70-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_model</span>(rf)</span>
+<span id="cb70-4"><a href="#cb70-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-5"><a href="#cb70-5" aria-hidden="true" tabindex="-1"></a><span class="co">#save(rf_res,file="dane/rf_res.rda")</span></span>
+<span id="cb70-6"><a href="#cb70-6" aria-hidden="true" tabindex="-1"></a><span class="fu">load</span>(<span class="st">"dane/rf_res.rda"</span>)</span>
+<span id="cb70-7"><a href="#cb70-7" aria-hidden="true" tabindex="-1"></a><span class="co"># rf_res &lt;-</span></span>
+<span id="cb70-8"><a href="#cb70-8" aria-hidden="true" tabindex="-1"></a><span class="co">#   rf_wf %&gt;%</span></span>
+<span id="cb70-9"><a href="#cb70-9" aria-hidden="true" tabindex="-1"></a><span class="co">#   tune_grid(</span></span>
+<span id="cb70-10"><a href="#cb70-10" aria-hidden="true" tabindex="-1"></a><span class="co">#     resamples = rs,</span></span>
+<span id="cb70-11"><a href="#cb70-11" aria-hidden="true" tabindex="-1"></a><span class="co">#     grid = grid,</span></span>
+<span id="cb70-12"><a href="#cb70-12" aria-hidden="true" tabindex="-1"></a><span class="co">#     metrics = meas</span></span>
+<span id="cb70-13"><a href="#cb70-13" aria-hidden="true" tabindex="-1"></a><span class="co"># )</span></span>
+<span id="cb70-14"><a href="#cb70-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-15"><a href="#cb70-15" aria-hidden="true" tabindex="-1"></a>rf_res <span class="sc">%&gt;%</span></span>
+<span id="cb70-16"><a href="#cb70-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">collect_metrics</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb70-17"><a href="#cb70-17" aria-hidden="true" tabindex="-1"></a>  flextable<span class="sc">::</span><span class="fu">flextable</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+
+<div class="tabwid"><style>.cl-9b20f76e{}.cl-9b144f28{font-family:'Arial';font-size:11pt;font-weight:normal;font-style:normal;text-decoration:none;color:rgba(0, 0, 0, 1.00);background-color:transparent;}.cl-9b1912f6{margin:0;text-align:right;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);padding-bottom:5pt;padding-top:5pt;padding-left:5pt;padding-right:5pt;line-height: 1;background-color:transparent;}.cl-9b191300{margin:0;text-align:left;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);padding-bottom:5pt;padding-top:5pt;padding-left:5pt;padding-right:5pt;line-height: 1;background-color:transparent;}.cl-9b193754{width:0.75in;background-color:transparent;vertical-align: middle;border-bottom: 2pt solid rgba(102, 102, 102, 1.00);border-top: 2pt solid rgba(102, 102, 102, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-9b19375e{width:0.75in;background-color:transparent;vertical-align: middle;border-bottom: 2pt solid rgba(102, 102, 102, 1.00);border-top: 2pt solid rgba(102, 102, 102, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-9b193768{width:0.75in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-9b193769{width:0.75in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-9b193772{width:0.75in;background-color:transparent;vertical-align: middle;border-bottom: 2pt solid rgba(102, 102, 102, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-9b193773{width:0.75in;background-color:transparent;vertical-align: middle;border-bottom: 2pt solid rgba(102, 102, 102, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}</style><table class="cl-9b20f76e"><thead><tr style="overflow-wrap:break-word;"><th class="cl-9b193754"><p class="cl-9b1912f6"><span class="cl-9b144f28">mtry</span></p></th><th class="cl-9b193754"><p class="cl-9b1912f6"><span class="cl-9b144f28">trees</span></p></th><th class="cl-9b193754"><p class="cl-9b1912f6"><span class="cl-9b144f28">min_n</span></p></th><th class="cl-9b19375e"><p class="cl-9b191300"><span class="cl-9b144f28">.metric</span></p></th><th class="cl-9b19375e"><p class="cl-9b191300"><span class="cl-9b144f28">.estimator</span></p></th><th class="cl-9b193754"><p class="cl-9b1912f6"><span class="cl-9b144f28">mean</span></p></th><th class="cl-9b193754"><p class="cl-9b1912f6"><span class="cl-9b144f28">n</span></p></th><th class="cl-9b193754"><p class="cl-9b1912f6"><span class="cl-9b144f28">std_err</span></p></th><th class="cl-9b19375e"><p class="cl-9b191300"><span class="cl-9b144f28">.config</span></p></th></tr></thead><tbody><tr style="overflow-wrap:break-word;"><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">1</span></p></td><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">1,672</span></p></td><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">16</span></p></td><td class="cl-9b193769"><p class="cl-9b191300"><span class="cl-9b144f28">mae</span></p></td><td class="cl-9b193769"><p class="cl-9b191300"><span class="cl-9b144f28">standard</span></p></td><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">0.5078263</span></p></td><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">5</span></p></td><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">0.004953968</span></p></td><td class="cl-9b193769"><p class="cl-9b191300"><span class="cl-9b144f28">Preprocessor1_Model01</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">1</span></p></td><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">1,672</span></p></td><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">16</span></p></td><td class="cl-9b193769"><p class="cl-9b191300"><span class="cl-9b144f28">rmse</span></p></td><td class="cl-9b193769"><p class="cl-9b191300"><span class="cl-9b144f28">standard</span></p></td><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">1.4256822</span></p></td><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">5</span></p></td><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">0.150549485</span></p></td><td class="cl-9b193769"><p class="cl-9b191300"><span class="cl-9b144f28">Preprocessor1_Model01</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">1</span></p></td><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">1,672</span></p></td><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">16</span></p></td><td class="cl-9b193769"><p class="cl-9b191300"><span class="cl-9b144f28">rsq</span></p></td><td class="cl-9b193769"><p class="cl-9b191300"><span class="cl-9b144f28">standard</span></p></td><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">0.1378466</span></p></td><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">5</span></p></td><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">0.013535411</span></p></td><td class="cl-9b193769"><p class="cl-9b191300"><span class="cl-9b144f28">Preprocessor1_Model01</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">3</span></p></td><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">161</span></p></td><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">6</span></p></td><td class="cl-9b193769"><p class="cl-9b191300"><span class="cl-9b144f28">mae</span></p></td><td class="cl-9b193769"><p class="cl-9b191300"><span class="cl-9b144f28">standard</span></p></td><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">0.5162165</span></p></td><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">5</span></p></td><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">0.008071104</span></p></td><td class="cl-9b193769"><p class="cl-9b191300"><span class="cl-9b144f28">Preprocessor1_Model02</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">3</span></p></td><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">161</span></p></td><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">6</span></p></td><td class="cl-9b193769"><p class="cl-9b191300"><span class="cl-9b144f28">rmse</span></p></td><td class="cl-9b193769"><p class="cl-9b191300"><span class="cl-9b144f28">standard</span></p></td><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">1.4829155</span></p></td><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">5</span></p></td><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">0.123913987</span></p></td><td class="cl-9b193769"><p class="cl-9b191300"><span class="cl-9b144f28">Preprocessor1_Model02</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">3</span></p></td><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">161</span></p></td><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">6</span></p></td><td class="cl-9b193769"><p class="cl-9b191300"><span class="cl-9b144f28">rsq</span></p></td><td class="cl-9b193769"><p class="cl-9b191300"><span class="cl-9b144f28">standard</span></p></td><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">0.1111399</span></p></td><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">5</span></p></td><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">0.008387420</span></p></td><td class="cl-9b193769"><p class="cl-9b191300"><span class="cl-9b144f28">Preprocessor1_Model02</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">6</span></p></td><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">1,272</span></p></td><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">29</span></p></td><td class="cl-9b193769"><p class="cl-9b191300"><span class="cl-9b144f28">mae</span></p></td><td class="cl-9b193769"><p class="cl-9b191300"><span class="cl-9b144f28">standard</span></p></td><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">0.5017391</span></p></td><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">5</span></p></td><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">0.005258736</span></p></td><td class="cl-9b193769"><p class="cl-9b191300"><span class="cl-9b144f28">Preprocessor1_Model03</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">6</span></p></td><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">1,272</span></p></td><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">29</span></p></td><td class="cl-9b193769"><p class="cl-9b191300"><span class="cl-9b144f28">rmse</span></p></td><td class="cl-9b193769"><p class="cl-9b191300"><span class="cl-9b144f28">standard</span></p></td><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">1.4289329</span></p></td><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">5</span></p></td><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">0.145604312</span></p></td><td class="cl-9b193769"><p class="cl-9b191300"><span class="cl-9b144f28">Preprocessor1_Model03</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">6</span></p></td><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">1,272</span></p></td><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">29</span></p></td><td class="cl-9b193769"><p class="cl-9b191300"><span class="cl-9b144f28">rsq</span></p></td><td class="cl-9b193769"><p class="cl-9b191300"><span class="cl-9b144f28">standard</span></p></td><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">0.1372586</span></p></td><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">5</span></p></td><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">0.011595145</span></p></td><td class="cl-9b193769"><p class="cl-9b191300"><span class="cl-9b144f28">Preprocessor1_Model03</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">2</span></p></td><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">550</span></p></td><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">18</span></p></td><td class="cl-9b193769"><p class="cl-9b191300"><span class="cl-9b144f28">mae</span></p></td><td class="cl-9b193769"><p class="cl-9b191300"><span class="cl-9b144f28">standard</span></p></td><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">0.4994387</span></p></td><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">5</span></p></td><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">0.006230688</span></p></td><td class="cl-9b193769"><p class="cl-9b191300"><span class="cl-9b144f28">Preprocessor1_Model04</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">2</span></p></td><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">550</span></p></td><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">18</span></p></td><td class="cl-9b193769"><p class="cl-9b191300"><span class="cl-9b144f28">rmse</span></p></td><td class="cl-9b193769"><p class="cl-9b191300"><span class="cl-9b144f28">standard</span></p></td><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">1.4274957</span></p></td><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">5</span></p></td><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">0.143272109</span></p></td><td class="cl-9b193769"><p class="cl-9b191300"><span class="cl-9b144f28">Preprocessor1_Model04</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">2</span></p></td><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">550</span></p></td><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">18</span></p></td><td class="cl-9b193769"><p class="cl-9b191300"><span class="cl-9b144f28">rsq</span></p></td><td class="cl-9b193769"><p class="cl-9b191300"><span class="cl-9b144f28">standard</span></p></td><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">0.1373278</span></p></td><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">5</span></p></td><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">0.012565248</span></p></td><td class="cl-9b193769"><p class="cl-9b191300"><span class="cl-9b144f28">Preprocessor1_Model04</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">4</span></p></td><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">1,450</span></p></td><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">4</span></p></td><td class="cl-9b193769"><p class="cl-9b191300"><span class="cl-9b144f28">mae</span></p></td><td class="cl-9b193769"><p class="cl-9b191300"><span class="cl-9b144f28">standard</span></p></td><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">0.5287843</span></p></td><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">5</span></p></td><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">0.008172850</span></p></td><td class="cl-9b193769"><p class="cl-9b191300"><span class="cl-9b144f28">Preprocessor1_Model05</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">4</span></p></td><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">1,450</span></p></td><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">4</span></p></td><td class="cl-9b193769"><p class="cl-9b191300"><span class="cl-9b144f28">rmse</span></p></td><td class="cl-9b193769"><p class="cl-9b191300"><span class="cl-9b144f28">standard</span></p></td><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">1.5182841</span></p></td><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">5</span></p></td><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">0.114868875</span></p></td><td class="cl-9b193769"><p class="cl-9b191300"><span class="cl-9b144f28">Preprocessor1_Model05</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">4</span></p></td><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">1,450</span></p></td><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">4</span></p></td><td class="cl-9b193769"><p class="cl-9b191300"><span class="cl-9b144f28">rsq</span></p></td><td class="cl-9b193769"><p class="cl-9b191300"><span class="cl-9b144f28">standard</span></p></td><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">0.1002286</span></p></td><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">5</span></p></td><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">0.009318141</span></p></td><td class="cl-9b193769"><p class="cl-9b191300"><span class="cl-9b144f28">Preprocessor1_Model05</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">8</span></p></td><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">1,153</span></p></td><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">39</span></p></td><td class="cl-9b193769"><p class="cl-9b191300"><span class="cl-9b144f28">mae</span></p></td><td class="cl-9b193769"><p class="cl-9b191300"><span class="cl-9b144f28">standard</span></p></td><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">0.5009281</span></p></td><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">5</span></p></td><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">0.004882914</span></p></td><td class="cl-9b193769"><p class="cl-9b191300"><span class="cl-9b144f28">Preprocessor1_Model06</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">8</span></p></td><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">1,153</span></p></td><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">39</span></p></td><td class="cl-9b193769"><p class="cl-9b191300"><span class="cl-9b144f28">rmse</span></p></td><td class="cl-9b193769"><p class="cl-9b191300"><span class="cl-9b144f28">standard</span></p></td><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">1.4251763</span></p></td><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">5</span></p></td><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">0.147826977</span></p></td><td class="cl-9b193769"><p class="cl-9b191300"><span class="cl-9b144f28">Preprocessor1_Model06</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">8</span></p></td><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">1,153</span></p></td><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">39</span></p></td><td class="cl-9b193769"><p class="cl-9b191300"><span class="cl-9b144f28">rsq</span></p></td><td class="cl-9b193769"><p class="cl-9b191300"><span class="cl-9b144f28">standard</span></p></td><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">0.1379264</span></p></td><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">5</span></p></td><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">0.012126270</span></p></td><td class="cl-9b193769"><p class="cl-9b191300"><span class="cl-9b144f28">Preprocessor1_Model06</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">7</span></p></td><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">1,897</span></p></td><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">10</span></p></td><td class="cl-9b193769"><p class="cl-9b191300"><span class="cl-9b144f28">mae</span></p></td><td class="cl-9b193769"><p class="cl-9b191300"><span class="cl-9b144f28">standard</span></p></td><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">0.5136045</span></p></td><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">5</span></p></td><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">0.006707099</span></p></td><td class="cl-9b193769"><p class="cl-9b191300"><span class="cl-9b144f28">Preprocessor1_Model07</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">7</span></p></td><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">1,897</span></p></td><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">10</span></p></td><td class="cl-9b193769"><p class="cl-9b191300"><span class="cl-9b144f28">rmse</span></p></td><td class="cl-9b193769"><p class="cl-9b191300"><span class="cl-9b144f28">standard</span></p></td><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">1.4667778</span></p></td><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">5</span></p></td><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">0.133379809</span></p></td><td class="cl-9b193769"><p class="cl-9b191300"><span class="cl-9b144f28">Preprocessor1_Model07</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">7</span></p></td><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">1,897</span></p></td><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">10</span></p></td><td class="cl-9b193769"><p class="cl-9b191300"><span class="cl-9b144f28">rsq</span></p></td><td class="cl-9b193769"><p class="cl-9b191300"><span class="cl-9b144f28">standard</span></p></td><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">0.1171851</span></p></td><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">5</span></p></td><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">0.007266560</span></p></td><td class="cl-9b193769"><p class="cl-9b191300"><span class="cl-9b144f28">Preprocessor1_Model07</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">7</span></p></td><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">272</span></p></td><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">32</span></p></td><td class="cl-9b193769"><p class="cl-9b191300"><span class="cl-9b144f28">mae</span></p></td><td class="cl-9b193769"><p class="cl-9b191300"><span class="cl-9b144f28">standard</span></p></td><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">0.5008366</span></p></td><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">5</span></p></td><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">0.005295809</span></p></td><td class="cl-9b193769"><p class="cl-9b191300"><span class="cl-9b144f28">Preprocessor1_Model08</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">7</span></p></td><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">272</span></p></td><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">32</span></p></td><td class="cl-9b193769"><p class="cl-9b191300"><span class="cl-9b144f28">rmse</span></p></td><td class="cl-9b193769"><p class="cl-9b191300"><span class="cl-9b144f28">standard</span></p></td><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">1.4265152</span></p></td><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">5</span></p></td><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">0.146238974</span></p></td><td class="cl-9b193769"><p class="cl-9b191300"><span class="cl-9b144f28">Preprocessor1_Model08</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">7</span></p></td><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">272</span></p></td><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">32</span></p></td><td class="cl-9b193769"><p class="cl-9b191300"><span class="cl-9b144f28">rsq</span></p></td><td class="cl-9b193769"><p class="cl-9b191300"><span class="cl-9b144f28">standard</span></p></td><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">0.1387071</span></p></td><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">5</span></p></td><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">0.011213513</span></p></td><td class="cl-9b193769"><p class="cl-9b191300"><span class="cl-9b144f28">Preprocessor1_Model08</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">9</span></p></td><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">991</span></p></td><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">22</span></p></td><td class="cl-9b193769"><p class="cl-9b191300"><span class="cl-9b144f28">mae</span></p></td><td class="cl-9b193769"><p class="cl-9b191300"><span class="cl-9b144f28">standard</span></p></td><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">0.5033377</span></p></td><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">5</span></p></td><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">0.005955421</span></p></td><td class="cl-9b193769"><p class="cl-9b191300"><span class="cl-9b144f28">Preprocessor1_Model09</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">9</span></p></td><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">991</span></p></td><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">22</span></p></td><td class="cl-9b193769"><p class="cl-9b191300"><span class="cl-9b144f28">rmse</span></p></td><td class="cl-9b193769"><p class="cl-9b191300"><span class="cl-9b144f28">standard</span></p></td><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">1.4351177</span></p></td><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">5</span></p></td><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">0.143217770</span></p></td><td class="cl-9b193769"><p class="cl-9b191300"><span class="cl-9b144f28">Preprocessor1_Model09</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">9</span></p></td><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">991</span></p></td><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">22</span></p></td><td class="cl-9b193769"><p class="cl-9b191300"><span class="cl-9b144f28">rsq</span></p></td><td class="cl-9b193769"><p class="cl-9b191300"><span class="cl-9b144f28">standard</span></p></td><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">0.1340061</span></p></td><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">5</span></p></td><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">0.009698633</span></p></td><td class="cl-9b193769"><p class="cl-9b191300"><span class="cl-9b144f28">Preprocessor1_Model09</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">11</span></p></td><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">709</span></p></td><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">26</span></p></td><td class="cl-9b193769"><p class="cl-9b191300"><span class="cl-9b144f28">mae</span></p></td><td class="cl-9b193769"><p class="cl-9b191300"><span class="cl-9b144f28">standard</span></p></td><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">0.5017267</span></p></td><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">5</span></p></td><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">0.005426327</span></p></td><td class="cl-9b193769"><p class="cl-9b191300"><span class="cl-9b144f28">Preprocessor1_Model10</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">11</span></p></td><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">709</span></p></td><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">26</span></p></td><td class="cl-9b193769"><p class="cl-9b191300"><span class="cl-9b144f28">rmse</span></p></td><td class="cl-9b193769"><p class="cl-9b191300"><span class="cl-9b144f28">standard</span></p></td><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">1.4298546</span></p></td><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">5</span></p></td><td class="cl-9b193768"><p class="cl-9b1912f6"><span class="cl-9b144f28">0.145638486</span></p></td><td class="cl-9b193769"><p class="cl-9b191300"><span class="cl-9b144f28">Preprocessor1_Model10</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-9b193772"><p class="cl-9b1912f6"><span class="cl-9b144f28">11</span></p></td><td class="cl-9b193772"><p class="cl-9b1912f6"><span class="cl-9b144f28">709</span></p></td><td class="cl-9b193772"><p class="cl-9b1912f6"><span class="cl-9b144f28">26</span></p></td><td class="cl-9b193773"><p class="cl-9b191300"><span class="cl-9b144f28">rsq</span></p></td><td class="cl-9b193773"><p class="cl-9b191300"><span class="cl-9b144f28">standard</span></p></td><td class="cl-9b193772"><p class="cl-9b1912f6"><span class="cl-9b144f28">0.1373274</span></p></td><td class="cl-9b193772"><p class="cl-9b1912f6"><span class="cl-9b144f28">5</span></p></td><td class="cl-9b193772"><p class="cl-9b1912f6"><span class="cl-9b144f28">0.011877597</span></p></td><td class="cl-9b193773"><p class="cl-9b191300"><span class="cl-9b144f28">Preprocessor1_Model10</span></p></td></tr></tbody></table></div>
+</div>
+<div class="sourceCode cell-code" id="cb71"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb71-1"><a href="#cb71-1" aria-hidden="true" tabindex="-1"></a>rf_res <span class="sc">%&gt;%</span></span>
+<span id="cb71-2"><a href="#cb71-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">show_best</span>(<span class="at">metric =</span> <span class="st">"rsq"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 5 × 9
+   mtry trees min_n .metric .estimator  mean     n std_err .config              
+  &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;chr&gt;   &lt;chr&gt;      &lt;dbl&gt; &lt;int&gt;   &lt;dbl&gt; &lt;chr&gt;                
+1     7   272    32 rsq     standard   0.139     5  0.0112 Preprocessor1_Model08
+2     8  1153    39 rsq     standard   0.138     5  0.0121 Preprocessor1_Model06
+3     1  1672    16 rsq     standard   0.138     5  0.0135 Preprocessor1_Model01
+4     2   550    18 rsq     standard   0.137     5  0.0126 Preprocessor1_Model04
+5    11   709    26 rsq     standard   0.137     5  0.0119 Preprocessor1_Model10</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb73"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb73-1"><a href="#cb73-1" aria-hidden="true" tabindex="-1"></a>rf_res <span class="sc">%&gt;%</span></span>
+<span id="cb73-2"><a href="#cb73-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">show_best</span>(<span class="at">metric =</span> <span class="st">"rmse"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 5 × 9
+   mtry trees min_n .metric .estimator  mean     n std_err .config              
+  &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;chr&gt;   &lt;chr&gt;      &lt;dbl&gt; &lt;int&gt;   &lt;dbl&gt; &lt;chr&gt;                
+1     8  1153    39 rmse    standard    1.43     5   0.148 Preprocessor1_Model06
+2     1  1672    16 rmse    standard    1.43     5   0.151 Preprocessor1_Model01
+3     7   272    32 rmse    standard    1.43     5   0.146 Preprocessor1_Model08
+4     2   550    18 rmse    standard    1.43     5   0.143 Preprocessor1_Model04
+5     6  1272    29 rmse    standard    1.43     5   0.146 Preprocessor1_Model03</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb75"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb75-1"><a href="#cb75-1" aria-hidden="true" tabindex="-1"></a>rf_res <span class="sc">%&gt;%</span> </span>
+<span id="cb75-2"><a href="#cb75-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">show_best</span>(<span class="at">metric =</span> <span class="st">"mae"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 5 × 9
+   mtry trees min_n .metric .estimator  mean     n std_err .config              
+  &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;chr&gt;   &lt;chr&gt;      &lt;dbl&gt; &lt;int&gt;   &lt;dbl&gt; &lt;chr&gt;                
+1     2   550    18 mae     standard   0.499     5 0.00623 Preprocessor1_Model04
+2     7   272    32 mae     standard   0.501     5 0.00530 Preprocessor1_Model08
+3     8  1153    39 mae     standard   0.501     5 0.00488 Preprocessor1_Model06
+4    11   709    26 mae     standard   0.502     5 0.00543 Preprocessor1_Model10
+5     6  1272    29 mae     standard   0.502     5 0.00526 Preprocessor1_Model03</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb77"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb77-1"><a href="#cb77-1" aria-hidden="true" tabindex="-1"></a><span class="fu">autoplot</span>(rf_res)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="ProjektQTR_files/figure-html/unnamed-chunk-16-1.png" class="img-fluid" width="672"></p>
+</div>
+<div class="sourceCode cell-code" id="cb78"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb78-1"><a href="#cb78-1" aria-hidden="true" tabindex="-1"></a>rf_best_param <span class="ot">&lt;-</span> <span class="fu">select_best</span>(rf_res, <span class="at">metric =</span> <span class="st">"rmse"</span>)</span>
+<span id="cb78-2"><a href="#cb78-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb78-3"><a href="#cb78-3" aria-hidden="true" tabindex="-1"></a>rf_final <span class="ot">&lt;-</span> </span>
+<span id="cb78-4"><a href="#cb78-4" aria-hidden="true" tabindex="-1"></a>  rf_wf <span class="sc">%&gt;%</span></span>
+<span id="cb78-5"><a href="#cb78-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">finalize_workflow</span>(rf_best_param)</span>
+<span id="cb78-6"><a href="#cb78-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb78-7"><a href="#cb78-7" aria-hidden="true" tabindex="-1"></a>rf_fit <span class="ot">&lt;-</span> rf_final <span class="sc">%&gt;%</span></span>
+<span id="cb78-8"><a href="#cb78-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">last_fit</span>(sales_split, <span class="at">metrics =</span> meas)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>! train/test split: preprocessor 1/1, model 1/1: 8 columns were requested but there were 4 predictors in the data. 4 will...</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb80"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb80-1"><a href="#cb80-1" aria-hidden="true" tabindex="-1"></a>rf_fit <span class="sc">%&gt;%</span></span>
+<span id="cb80-2"><a href="#cb80-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">collect_metrics</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 3 × 4
+  .metric .estimator .estimate .config             
+  &lt;chr&gt;   &lt;chr&gt;          &lt;dbl&gt; &lt;chr&gt;               
+1 rsq     standard       0.127 Preprocessor1_Model1
+2 rmse    standard       1.78  Preprocessor1_Model1
+3 mae     standard       0.513 Preprocessor1_Model1</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb82"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb82-1"><a href="#cb82-1" aria-hidden="true" tabindex="-1"></a>rf_fit <span class="sc">%&gt;%</span></span>
+<span id="cb82-2"><a href="#cb82-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">collect_predictions</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb82-3"><a href="#cb82-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(.pred, Global_Sales) <span class="sc">%&gt;%</span></span>
+<span id="cb82-4"><a href="#cb82-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>(<span class="at">n =</span> <span class="dv">20</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb82-5"><a href="#cb82-5" aria-hidden="true" tabindex="-1"></a>  flextable<span class="sc">::</span><span class="fu">flextable</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+
+<div class="tabwid"><style>.cl-a273fc78{}.cl-a269ac00{font-family:'Arial';font-size:11pt;font-weight:normal;font-style:normal;text-decoration:none;color:rgba(0, 0, 0, 1.00);background-color:transparent;}.cl-a26dbbf6{margin:0;text-align:right;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);padding-bottom:5pt;padding-top:5pt;padding-left:5pt;padding-right:5pt;line-height: 1;background-color:transparent;}.cl-a26dd398{width:0.75in;background-color:transparent;vertical-align: middle;border-bottom: 2pt solid rgba(102, 102, 102, 1.00);border-top: 2pt solid rgba(102, 102, 102, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-a26dd3a2{width:0.75in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-a26dd3a3{width:0.75in;background-color:transparent;vertical-align: middle;border-bottom: 2pt solid rgba(102, 102, 102, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}</style><table class="cl-a273fc78"><thead><tr style="overflow-wrap:break-word;"><th class="cl-a26dd398"><p class="cl-a26dbbf6"><span class="cl-a269ac00">.pred</span></p></th><th class="cl-a26dd398"><p class="cl-a26dbbf6"><span class="cl-a269ac00">Global_Sales</span></p></th></tr></thead><tbody><tr style="overflow-wrap:break-word;"><td class="cl-a26dd3a2"><p class="cl-a26dbbf6"><span class="cl-a269ac00">5.6075034</span></p></td><td class="cl-a26dd3a2"><p class="cl-a26dbbf6"><span class="cl-a269ac00">82.74</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-a26dd3a2"><p class="cl-a26dbbf6"><span class="cl-a269ac00">5.2660060</span></p></td><td class="cl-a26dd3a2"><p class="cl-a26dbbf6"><span class="cl-a269ac00">31.37</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-a26dd3a2"><p class="cl-a26dbbf6"><span class="cl-a269ac00">1.4565000</span></p></td><td class="cl-a26dd3a2"><p class="cl-a26dbbf6"><span class="cl-a269ac00">30.01</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-a26dd3a2"><p class="cl-a26dbbf6"><span class="cl-a269ac00">2.3713786</span></p></td><td class="cl-a26dd3a2"><p class="cl-a26dbbf6"><span class="cl-a269ac00">28.31</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-a26dd3a2"><p class="cl-a26dbbf6"><span class="cl-a269ac00">4.2962985</span></p></td><td class="cl-a26dd3a2"><p class="cl-a26dbbf6"><span class="cl-a269ac00">23.42</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-a26dd3a2"><p class="cl-a26dbbf6"><span class="cl-a269ac00">1.2042988</span></p></td><td class="cl-a26dd3a2"><p class="cl-a26dbbf6"><span class="cl-a269ac00">18.36</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-a26dd3a2"><p class="cl-a26dbbf6"><span class="cl-a269ac00">1.2892647</span></p></td><td class="cl-a26dd3a2"><p class="cl-a26dbbf6"><span class="cl-a269ac00">14.98</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-a26dd3a2"><p class="cl-a26dbbf6"><span class="cl-a269ac00">2.5919261</span></p></td><td class="cl-a26dd3a2"><p class="cl-a26dbbf6"><span class="cl-a269ac00">14.76</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-a26dd3a2"><p class="cl-a26dbbf6"><span class="cl-a269ac00">2.1157533</span></p></td><td class="cl-a26dd3a2"><p class="cl-a26dbbf6"><span class="cl-a269ac00">14.35</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-a26dd3a2"><p class="cl-a26dbbf6"><span class="cl-a269ac00">3.1665405</span></p></td><td class="cl-a26dd3a2"><p class="cl-a26dbbf6"><span class="cl-a269ac00">13.46</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-a26dd3a2"><p class="cl-a26dbbf6"><span class="cl-a269ac00">8.2628276</span></p></td><td class="cl-a26dd3a2"><p class="cl-a26dbbf6"><span class="cl-a269ac00">11.98</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-a26dd3a2"><p class="cl-a26dbbf6"><span class="cl-a269ac00">1.1730154</span></p></td><td class="cl-a26dd3a2"><p class="cl-a26dbbf6"><span class="cl-a269ac00">11.90</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-a26dd3a2"><p class="cl-a26dbbf6"><span class="cl-a269ac00">2.0252138</span></p></td><td class="cl-a26dd3a2"><p class="cl-a26dbbf6"><span class="cl-a269ac00">11.33</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-a26dd3a2"><p class="cl-a26dbbf6"><span class="cl-a269ac00">0.8190642</span></p></td><td class="cl-a26dd3a2"><p class="cl-a26dbbf6"><span class="cl-a269ac00">10.95</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-a26dd3a2"><p class="cl-a26dbbf6"><span class="cl-a269ac00">1.2267933</span></p></td><td class="cl-a26dd3a2"><p class="cl-a26dbbf6"><span class="cl-a269ac00">10.77</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-a26dd3a2"><p class="cl-a26dbbf6"><span class="cl-a269ac00">3.2999502</span></p></td><td class="cl-a26dd3a2"><p class="cl-a26dbbf6"><span class="cl-a269ac00">9.88</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-a26dd3a2"><p class="cl-a26dbbf6"><span class="cl-a269ac00">2.3103792</span></p></td><td class="cl-a26dd3a2"><p class="cl-a26dbbf6"><span class="cl-a269ac00">9.87</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-a26dd3a2"><p class="cl-a26dbbf6"><span class="cl-a269ac00">0.6812410</span></p></td><td class="cl-a26dd3a2"><p class="cl-a26dbbf6"><span class="cl-a269ac00">9.72</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-a26dd3a2"><p class="cl-a26dbbf6"><span class="cl-a269ac00">0.6927744</span></p></td><td class="cl-a26dd3a2"><p class="cl-a26dbbf6"><span class="cl-a269ac00">9.52</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-a26dd3a3"><p class="cl-a26dbbf6"><span class="cl-a269ac00">1.5201608</span></p></td><td class="cl-a26dd3a3"><p class="cl-a26dbbf6"><span class="cl-a269ac00">8.49</span></p></td></tr></tbody></table></div>
+</div>
+<div class="sourceCode cell-code" id="cb83"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb83-1"><a href="#cb83-1" aria-hidden="true" tabindex="-1"></a>rf_fit <span class="sc">%&gt;%</span></span>
+<span id="cb83-2"><a href="#cb83-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">collect_predictions</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb83-3"><a href="#cb83-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(.pred, Global_Sales) <span class="sc">%&gt;%</span></span>
+<span id="cb83-4"><a href="#cb83-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(.pred, Global_Sales)) <span class="sc">+</span></span>
+<span id="cb83-5"><a href="#cb83-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_jitter</span>(<span class="at">width =</span> <span class="dv">0</span>, <span class="at">alpha =</span> <span class="fl">0.05</span>) <span class="sc">+</span></span>
+<span id="cb83-6"><a href="#cb83-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> lm, </span>
+<span id="cb83-7"><a href="#cb83-7" aria-hidden="true" tabindex="-1"></a>              <span class="at">se =</span> F)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>`geom_smooth()` using formula 'y ~ x'</code></pre>
+</div>
+<div class="cell-output-display">
+<p><img src="ProjektQTR_files/figure-html/unnamed-chunk-16-2.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 </section>
