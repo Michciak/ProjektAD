@@ -1,6 +1,6 @@
 ---
 title: "Analiza sprzedaży gier video 1980-2016"
-subtitle: "Projekt v.3.0.0"
+subtitle: "Projekt.v3.0.0"
 author: "Michał Koziński"
 format: 
   html:
@@ -8,7 +8,8 @@ format:
     toc: true
     toc-depth: 3
     theme: pulse
-    # self-contained: true
+    #self-contained: true
+server: shiny
 date: "`r Sys.Date()`"
 ---
 
@@ -75,7 +76,7 @@ Zbiór danych pochodzi ze stronny *Kaggle*:
 
 ### Zawartość zbioru
 
-Zbiór danych jest zestawieniem wyników sprzedażowych gier video z lat 1980 - 2016. Uwzględnione zostały w nim tylko tytuły, które sprzedały się w liczbie większej niż 100 000 kopii. Zbiór uwzględnia wyniki sprzedażowe w Ameryce Północnej, Europie i Japonii.
+Zbiór danych jest zestawieniem wyników sprzedażowych gier video z lat 1980 - 2020. Uwzględnione zostały w nim tylko tytuły, które sprzedały się w liczbie większej niż 100 000 kopii. Zbiór uwzględnia wyniki sprzedażowe w Ameryce Północnej, Europie i Japonii.
 
 <br/>
 
@@ -111,23 +112,13 @@ Zmienne zawarte w zbiorze:
 
 # Cele badawcze
 
-<details>
-
-  <summary>Cele badawcze</summary>
-
 Opis zbioru danych, przedstawienie korelacji między zawartymi w nim zmiennymi, budowa modelu predykcyjnego.
-
-</details>
 
 <br/>
 
 ___
 
 # Przygotowanie zbioru
-
-<details>
-
-  <summary>Przygotowanie zbioru</summary>
 
 <br/>
 
@@ -143,6 +134,7 @@ game_sales <- read.csv("C:/Users/Michc/Dropbox/Uczelnia/Semestr 5/Projekt z anal
 
 ### Czyszczenie danych
 
+<br/>
 
 #### Zmiana typu danych z *char* na *factor*
 
@@ -153,6 +145,7 @@ game_sales$Genre <- as.factor(game_sales$Genre)
 game_sales$Publisher <- as.factor(game_sales$Publisher)
 ```
 
+<br/>
 
 #### Zamiana roku produkcji z *char* na *numeric*
 
@@ -160,11 +153,13 @@ game_sales$Publisher <- as.factor(game_sales$Publisher)
 game_sales$Year <- as.numeric(game_sales$Year)
 ```
 
+<br/>
 
 <br/>
 
 ### Obsługa braków danych
 
+<br/>
 
 #### Zmiana *"unknown"* na *NA*
 
@@ -173,6 +168,7 @@ game_sales[which(game_sales$Publisher=="Unknown"),6] <- NA
 
 ```
 
+<br/>
 
 #### Lokalizowanie braków
 
@@ -198,24 +194,11 @@ kbl(tibble(Rank=sum(is.na(game_sales$Rank)),
   column_spec(c(4,6), color = "#FF3030") %>%
   column_spec(12, color = "orange") %>%
   column_spec(c(1:3,5,7:11), color = "#1E90FF")
-```
-<br/>
 
-$407$ obserwacji z brakami danych jest niewielką liczbą w skali $16\,598$ $(\sim2.45\%)$. Usunięcie tych obserwacji nie wpłynie w znaczący sposób na wartość naukową zbioru.
+#kbl(tibble('Year & Publisher'=count(game_sales[which(is.na(game_sales$Year) & is.na(game_sales$Publisher)),]))) %>%
+#  kable_styling("striped", full_width = F)
 
-```{r eval=T, include=T, echo=F}
-missings <- game_sales[which(is.na(game_sales$Year) | is.na(game_sales$Publisher)),] %>%
-  mutate(Rank = as.numeric(Rank))
-#median(missings$Rank)
-#mean(missings$Global_Sales)
-
-tibble("Średnia z `Rank`"= mean(missings$Rank),"Mediana z `Global_Sales`"= median(missings$Global_Sales)) %>%
-  kbl() %>%
-  kable_styling()
-```
-
-```{r}
-game_sales <- na.omit(game_sales)
+#count(game_sales[which(is.na(game_sales$Year) & is.na(game_sales$Publisher)),]) #125 takich obserwacji, gdzie nie znamy, ani roku, ani wydawcy
 ```
 
 ```{r text sracapping, eval=FALSE, include=FALSE}
@@ -227,41 +210,14 @@ tidytext::unnest_tokens(data.frame(levels(game_sales$Name)))
 count(tidytext::unnest_tokens(levels(game_sales$Name)))
 ```
 
-<br/>
-
-### Obserwacje nietypowe
-
-W zbiorze znalazły się obserwacje nietypowe
-
-```{r}
-data.frame(game_sales[which(game_sales$Year>2016),]) %>%
-  `rownames<-`(NULL) %>%
-  select(Rank,Name,Platform,Year,Genre,Publisher,Global_Sales) %>%
-  kbl() %>%
-  kable_styling()
-```
 
 <br/>
-
-Są to $4$ obserwacje, których `rok wydania` jest późniejszy niż innych obserwacji ujętych w zbiorze, poza tym wykracza poza lata deklarowane w opisie zbioru na stronie źródłowej.
-
-Ilość sprzedanych kopii wśród tych obserwacji jest niewielka, co potwierdza ich pozycja w rankingu, przez co zdecydowałem się na usunięcie tych obserwacji.
-
-```{r}
-game_sales <- game_sales[-which(game_sales$Year>2016),]
-```
-
-</details>
 
 <br/>
 
 ___
 
 # Opis zbioru
-
-<details>
-
-  <summary>Opis zbioru</summary>
 
 <br/>
 
@@ -304,12 +260,11 @@ ggplot(aes(Year))+
        y="Liczba tytułów")+
 #  scale_x_discrete()+
 #  scale_x_discrete(breaks = 1980:2020)+
-  scale_x_continuous(breaks=seq(1980,2016,by=2))+
-  geom_hline(yintercept = c(500,1000), linetype = "dashed", color = "black", alpha = 0.4)+
+  scale_x_continuous(breaks=seq(1980,2020,by=2))+
   theme_classic(base_size = 40)+
   theme(
     axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)
-    ,plot.title = element_text(color = "black", size = 48, face = "bold")
+    ,plot.title = element_text(color = "#8800FF", size = 48, face = "bold")
     ,plot.subtitle = element_text(size = 25, face = "bold")
     ,plot.caption = element_text(face = "italic")
     #,plot.background = element_rect(fill = "#141414")
@@ -319,33 +274,8 @@ ggplot(aes(Year))+
 #8800FF
 ```
 
-```{r wykres sprzedazy, fig.width = 21, fig.height = 10, eval=T, include=T, echo=F}
-game_sales %>%
-  se
-ggplot(aes(x=Year))+
-  geom_smooth(aes(y=EU_Sales*1000000),se=F,color="darkgreen") +
-  geom_smooth(aes(y=NA_Sales*1000000),se=F,color="darkblue") +
-  geom_smooth(aes(y=JP_Sales*1000000),se=F,color="darkred") +
-  geom_smooth(aes(y=Other_Sales*1000000),se=F,color="black") +
-  labs(title="Łączna sprzedaż gier wydawanych w poszczególnych latach z podziałem na regiony",
-       x="Rok wydania",
-       y="Sprzedaż")+
-#  scale_x_discrete()+
-#  scale_x_discrete(breaks = 1980:2020)+
-  scale_x_continuous(breaks=seq(1980,2016,by=2))+
-  theme_classic(base_size = 40)+
-  theme(
-    axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)
-    ,plot.title = element_text(color = "black", size = 32, face = "bold")
-    ,plot.subtitle = element_text(size = 25, face = "bold")
-    ,plot.caption = element_text(face = "italic")
-    ,legend.position = "bottom"
-    ,legend.background = element_rect(fill = "white", color = "black")
-    #,plot.background = element_rect(fill = "#141414")
-  )
-
-
-#8800FF
+```{r include=FALSE}
+game_sales[which(game_sales$Year>2016),]
 ```
 
 <br/>
@@ -370,7 +300,7 @@ ggplot(aes(x=Year))+
 
 ```
 
-```{r eval=FALSE, include=FALSE}
+```{r}
 Global_Sales_Publisher <- data.frame(aggregate(game_sales$Global_Sales, by=list(Category=game_sales$Publisher), FUN = sum)) %>%
   `colnames<-`(c("Publisher","Global_Sales"))
 
@@ -383,24 +313,113 @@ filter(Name=="Gal*gun 2")
 ```
 
 
-```{r include=FALSE, eval=FALSE}
+```{r}
+
+
 head(Global_Sales_Publisher[order(Global_Sales_Publisher$Global_Sales, decreasing=T),],15)
+
+
+
 ```
 
-</details>
 
-<br/>
 
-___
 
-<br/>
+
+
+
+# Model predykcyjny - LaS lOsOwY
+
+```{r}
+set.seed(14102)
+
+index <- sample(1:nrow(game_sales), (7/10*nrow(game_sales)))
+
+model <- game_sales[index,] %>%
+  rpart::rpart(Global_Sales~Genre+Publisher+Platform,.)
+
+pred <- predict(model, newdata = game_sales[-index,])
+
+#cbind(pred, game_sales[-index,"Global_Sales"])
+abs(mean(pred-game_sales[-index,"Global_Sales"]))*100000
+
+
+```
+
+<!-- ```{r} -->
+<!-- model2 <- game_sales[index,] %>% -->
+<!--   rpart::rpart(Global_Sales~Genre+Publisher+Platform+Year,.) -->
+
+<!-- pred2 <- predict(model2, newdata = game_sales[-index,]) -->
+
+<!-- #cbind(pred2, game_sales[-index,"Global_Sales"]) -->
+<!-- abs(mean(pred2-game_sales[-index,"Global_Sales"]))*100000 -->
+
+<!-- ``` -->
+
+```{r}
+g_s <- na.omit(game_sales)
+
+index <- sample(1:nrow(g_s), (7/10*nrow(g_s)))
+
+# las <- randomForest::randomForest(Global_Sales~Genre+Publisher+Platform
+#                            ,data=g_s[index,]
+#                            ,xtest=g_s[-index,c('Genre','Publisher','Platform')]
+#                            ,ytest=g_s[-index,'Game_Sales'])
+levels(game_sales$Publisher) #578
+levels(game_sales$Genre) #12
+levels(game_sales$Platform) #31
+
+g_s <- game_sales %>%
+  na.omit() %>%
+#  select(Global_Sales,Genre,Publisher,Platform) %>%
+  fastDummies::dummy_cols(.,select_columns = 'Publisher',remove_selected_columns=T)
+
+colnames(g_s[,10:ncol(g_s)])
+
+index <- sample(1:nrow(g_s), (7/10*nrow(g_s)))
+
+# las <- randomForest::randomForest(Global_Sales~.-Global_Sales
+#                            ,data=g_s[index,]
+#                            ,xtest=g_s[-index,]
+#                            ,ytest=g_s[-index,])
+```
+
+
+```{r}
+error <- NULL
+
+# for(i in 1:10000){
+#   set.seed(i)
+# 
+# index <- sample(1:nrow(game_sales), (7/10*nrow(game_sales)))
+# 
+# model <- game_sales[index,] %>%
+#   rpart::rpart(Global_Sales~Genre+Publisher+Platform,.)
+# 
+# pred <- predict(model, newdata = game_sales[-index,])
+# 
+# #cbind(pred, game_sales[-index,"Global_Sales"])
+# #abs(mean(pred-game_sales[-index,"Global_Sales"]))*100000
+#   
+# error <- c(error,abs(mean(pred-game_sales[-index,"Global_Sales"]))*100000)
+# }
+
+
+min(error)
+max(error)
+mean(error)
+
+
+```
 
 # Model predykcyjny - `TidyModels`
 
 ```{r}
 library(tidymodels)
 set.seed(1410)
-sales_split <- initial_split(game_sales, strata = Global_Sales)
+game_s <- na.omit(game_sales)
+sales_split <- initial_split(game_s, strata = Global_Sales)
 sales_train <- training(sales_split)
 sales_test <- testing(sales_split)
 
@@ -551,6 +570,7 @@ rf_fit %>%
   geom_smooth(method = lm, 
               se = F)
 ```
+
 
 
 
