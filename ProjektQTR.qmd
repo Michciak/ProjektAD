@@ -1,6 +1,6 @@
 ---
 title: "Analiza sprzedaży gier video 1980-2016"
-subtitle: "Projekt v.3.0.0"
+subtitle: "Projekt v.3.0.1"
 author: "Michał Koziński"
 format: 
   html:
@@ -63,6 +63,8 @@ rok utworzenia zbioru 2020
 library(tidyverse)
 library(ggplot2)
 library(kableExtra)
+library(doParallel)
+registerDoParallel(cores = 8)
 ```
 
 # Przedstawienie zbioru danych
@@ -136,7 +138,8 @@ ___
 ```{r wczytanie danych}
 
 game_sales <- read.csv("C:/Users/Michc/Dropbox/Uczelnia/Semestr 5/Projekt z analizy danych/Projekt/dane/video_games.csv",na.strings = "N/A") 
-
+game_sales <- game_sales %>%
+  `rownames<-`(NULL)
 ```
 
 <br/>
@@ -233,7 +236,7 @@ count(tidytext::unnest_tokens(levels(game_sales$Name)))
 
 W zbiorze znalazły się obserwacje nietypowe
 
-```{r}
+```{r eval=TRUE, include=TRUE, echo=FALSE}
 data.frame(game_sales[which(game_sales$Year>2016),]) %>%
   `rownames<-`(NULL) %>%
   select(Rank,Name,Platform,Year,Genre,Publisher,Global_Sales) %>%
@@ -250,6 +253,12 @@ Ilość sprzedanych kopii wśród tych obserwacji jest niewielka, co potwierdza 
 ```{r}
 game_sales <- game_sales[-which(game_sales$Year>2016),]
 ```
+
+```{r eval=TRUE, include=TRUE, echo=FALSE}
+game_sales <- game_sales %>%
+  mutate(Rank = rownames(game_sales))
+```
+
 
 </details>
 
@@ -290,6 +299,8 @@ row.names(t) <- c("Minimum","Q1","Mediana","Średnia","Q3","Maksimum")
 kbl(t) %>%
   kable_styling(full_width = T) %>%
   add_footnote(label = "* liczba sztuk w milionach",notation = "none")
+
+remove(t)
 ```
 
 
@@ -319,30 +330,39 @@ ggplot(aes(Year))+
 #8800FF
 ```
 
-```{r wykres sprzedazy, fig.width = 21, fig.height = 10, eval=T, include=T, echo=F}
+```{r wykres sprzedazy, fig.width = 21, fig.height = 10, eval=T, include=T, echo=F,message=FALSE,warning=FALSE}
 game_sales %>%
-  se
-ggplot(aes(x=Year))+
-  geom_smooth(aes(y=EU_Sales*1000000),se=F,color="darkgreen") +
-  geom_smooth(aes(y=NA_Sales*1000000),se=F,color="darkblue") +
-  geom_smooth(aes(y=JP_Sales*1000000),se=F,color="darkred") +
-  geom_smooth(aes(y=Other_Sales*1000000),se=F,color="black") +
-  labs(title="Łączna sprzedaż gier wydawanych w poszczególnych latach z podziałem na regiony",
-       x="Rok wydania",
-       y="Sprzedaż")+
-#  scale_x_discrete()+
-#  scale_x_discrete(breaks = 1980:2020)+
-  scale_x_continuous(breaks=seq(1980,2016,by=2))+
-  theme_classic(base_size = 40)+
-  theme(
-    axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)
-    ,plot.title = element_text(color = "black", size = 32, face = "bold")
-    ,plot.subtitle = element_text(size = 25, face = "bold")
-    ,plot.caption = element_text(face = "italic")
-    ,legend.position = "bottom"
-    ,legend.background = element_rect(fill = "white", color = "black")
-    #,plot.background = element_rect(fill = "#141414")
-  )
+  mutate(Europa = EU_Sales,USA = NA_Sales,Japonia = JP_Sales,Other=Other_Sales) %>%
+  select(Year,Europa,USA,Japonia,Other) %>%
+  aggregate(.~Year, sum) %>%
+  pivot_longer(-Year) %>%
+  ggplot()+
+    geom_smooth(aes(Year,value*100000,colour=name),se=F)+
+    # geom_smooth(aes(y=EU_Sales*1000000),se=F,color="darkgreen") +
+    # geom_smooth(aes(y=NA_Sales*1000000),se=F,color="darkblue") +
+    # geom_smooth(aes(y=JP_Sales*1000000),se=F,color="darkred") +
+    # geom_smooth(aes(y=Other_Sales*1000000),se=F,color="black") +
+    labs(title="Łączna sprzedaż gier wydawanych w poszczególnych latach z podziałem na regiony",
+         x="Rok wydania",
+         y="Liczba sprzedanych kopii")+
+  #  scale_x_discrete()+
+  #  scale_x_discrete(breaks = 1980:2020)+
+    scale_x_continuous(breaks=seq(1980,2016,by=2))+
+    scale_y_continuous(labels = scales::label_number(big.mark = " ", decimal.mark = ",", scale = 1/1000000, suffix = " mln"), position = "right")+
+    scale_color_manual(values = c("green","red","blue","black"))+
+    theme_classic(base_size = 40)+
+    theme(
+      axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)
+      ,axis.text.y = element_text(angle = -30, vjust=0)
+      ,plot.title = element_text(color = "black", size = 32, face = "bold")
+      ,plot.subtitle = element_text(size = 25, face = "bold")
+      ,plot.caption = element_text(face = "italic")
+      ,legend.position = c(0.2, 0.75)
+      ,legend.background = element_rect(fill = "white")
+      ,legend.title = element_blank()
+      #,plot.background = element_rect(fill = "#141414")
+    )
+    #scale_fill_discrete(c("darkgreen","darkred","darkblue","black"),labels("Europa","Japonia","USA","Reszta świata"))
 
 
 #8800FF
@@ -397,7 +417,7 @@ ___
 
 # Model predykcyjny - `TidyModels`
 
-```{r}
+```{r message=FALSE, warning=FALSE}
 library(tidymodels)
 set.seed(1410)
 sales_split <- initial_split(game_sales, strata = Global_Sales)
@@ -408,16 +428,15 @@ sales_folds <- vfold_cv(sales_train, strata = Global_Sales)
 sales_folds
 ```
 
-```{r}
+```{r eval=TRUE,include=FALSE,echo=FALSE}
 library(usemodels)
 
-use_ranger(Global_Sales ~ Platform+Genre+Publisher+Year, data = sales_train)
+use_ranger(Global_Sales ~ Platform+Genre+Publisher, data = sales_train)
 
 library(textrecipes)
 ```
 
 ```{r}
-
 ranger_recipe <- 
   recipe(formula = Global_Sales ~ Platform + Genre + Publisher + Year, data = sales_train) 
 
@@ -431,14 +450,12 @@ ranger_workflow <-
   add_recipe(ranger_recipe) %>% 
   add_model(ranger_spec) 
 
-set.seed(40409)
-# library(doParallel)
-# registerDoParallel(cores = 8)
+set.seed(6164)
 #save(ranger_tune,file = "dane/ranger_tune.rda")
 load("dane/ranger_tune.rda")
 # ranger_tune <-
-#   tune_grid(ranger_workflow, 
-#             resamples = sales_folds, 
+#   tune_grid(ranger_workflow,
+#             resamples = sales_folds,
 #             grid = 11)
 ```
 
@@ -500,7 +517,7 @@ rf_wf <- workflow() %>%
   add_recipe(rec) %>%
   add_model(rf)
 
-#save(rf_res,file="dane/rf_res.rda")
+# save(rf_res,file="dane/rf_res.rda")
 load("dane/rf_res.rda")
 # rf_res <-
 #   rf_wf %>%
@@ -550,6 +567,13 @@ rf_fit %>%
   geom_jitter(width = 0, alpha = 0.05) +
   geom_smooth(method = lm, 
               se = F)
+  #tune::coord_obs_pred()
+
+result <- rf_fit %>%
+  collect_predictions() %>%
+  select(.pred, Global_Sales)
+
+mean(result$Global_Sales - result$.pred)*100000
 ```
 
 
