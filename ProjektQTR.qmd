@@ -488,7 +488,7 @@ collect_predictions(sales_fit) %>%
 
 ```
 
-# M-method random forset model
+# M-method random forest model
 
 ```{r}
 rec <- recipe(Global_Sales ~ Platform + Genre + Publisher + Year,
