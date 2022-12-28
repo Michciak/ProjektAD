@@ -1,6 +1,0 @@
-"0",""
-"0","rf_fit %>%"
-"0","  collect_predictions() %>%"
-"0","  select(.pred, Global_Sales) %>%"
-"0","  head(n = 20) %>%"
-"0","  flextable::flextable()"
