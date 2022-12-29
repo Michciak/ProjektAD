@@ -135,7 +135,6 @@ ___
 ### Wczytanie danych
 
 ```{r wczytanie danych}
-
 game_sales <- read.csv("C:/Users/Michc/Dropbox/Uczelnia/Semestr 5/Projekt z analizy danych/Projekt/dane/video_games.csv",na.strings = "N/A") 
 game_sales <- game_sales %>%
   `rownames<-`(NULL)
@@ -255,7 +254,27 @@ Ilość sprzedanych kopii wśród tych obserwacji jest niewielka, co potwierdza 
 game_sales <- game_sales[-which(game_sales$Year>2016),]
 ```
 
+<br/>
+
+W zbiorze znalazła się obserwacja, która w znacznym stopniu może zakłamywać statystki, a także utrudniać budowanie modeli predykcyjnych. Jest to obserwacja sklasyfikowana na pierwszej pozycji względem globalnej sprzedaży. 
+
+```{r}
+head(game_sales,n=1) %>%
+  kbl() %>%
+  kable_styling()
+```
+
+Jej wynik globalnej sprzedaży przewyższa ponad dwukrotnie wynik tytułu znajdującego się na drugiej pozycji, a wynika on z faktu, że gra była dołączana za darmo do każdej zakupionej konsoli Wii. 
+
+Ze względu na znaczący wpływ na otrzymywane wyniki, jaki miała owa obserwacja postanowiłem prowadzić dalsze działania bez uwzględniania powyższej obserwacji.
+
+```{r}
+game_sales <- game_sales[-1,]
+```
+
+
 ```{r eval=TRUE, include=TRUE, echo=FALSE}
+rownames(game_sales) <- 1:nrow(game_sales)
 game_sales <- game_sales %>%
   mutate(Rank = rownames(game_sales))
 ```
@@ -313,6 +332,10 @@ remove(t)
 
 ### Dane kategoryczne
 
+Zbiór zawiera `r nlevels(game_sales$Name)` różnych tytułów gier, którym przyporządkowano `r nlevels(game_sales$Genre)` gatunków. Gry znadujące się w zbiorze zostały wydane przez `r nlevels(game_sales$Publisher)` wydawców, na `r nlevels(game_sales$Platform)` platform.
+
+
+
 ```{r include=FALSE}
 # sunburstR::sunburst(data.frame("Wydawca"=game_sales$Publisher
 #                                "Platforma"=game_sales$Platform, 
@@ -340,7 +363,7 @@ Global_Sales_Publisher <- data.frame(aggregate(game_sales$Global_Sales, by=list(
 #   sunburstR::sunburst(width="100%", height=400)
 
 game_sales %>%
-filter(Name=="Gal*gun 2")
+filter(Name=="Test Drive Unlimited")
 ```
 
 
@@ -353,8 +376,6 @@ head(Global_Sales_Publisher[order(Global_Sales_Publisher$Global_Sales, decreasin
 <br/>
 
 ___
-
-<br/>
 
 # Wizualizacja
 
@@ -372,7 +393,7 @@ ggplot(aes(Year))+
 #  scale_x_discrete()+
 #  scale_x_discrete(breaks = 1980:2020)+
   scale_x_continuous(breaks=seq(1980,2016,by=2))+
-  geom_hline(yintercept = c(500,1000), linetype = "dashed", color = "black", alpha = 0.4)+
+  geom_hline(yintercept = c(500,1000), linetype = "dashed", color = "black", alpha = 0.8, size=1.3)+
   theme_classic(base_size = 40)+
   theme(
     axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)
@@ -419,15 +440,77 @@ game_sales %>%
 
 <br/>
 
+### Cykl życia platform
+
+```{r echo=FALSE,eval=TRUE,include=TRUE,message=FALSE,warning=FALSE}
+t1 <- game_sales %>%
+  select(Year,Platform) %>%
+  aggregate(.~Platform, FUN = min) %>%
+  pivot_longer(-Platform) %>%
+  mutate(min = value) %>%
+  select(Platform, min)
+
+
+t2 <- game_sales %>%
+  select(Year,Platform) %>%
+  aggregate(.~Platform, FUN = max) %>%
+  pivot_longer(-Platform) %>%
+  mutate(max = value) %>%
+  select(Platform, max)
+
+t <- merge(t1,t2, by="Platform", sort=T)
+
+t[order(t$min),] %>%
+  `row.names<-`(NULL) %>%
+  `colnames<-`(c("Platforma","Rok startu","Rok końca")) %>%
+  kbl() %>%
+  kable_styling()%>%
+  scroll_box(width = "100%", height = "200px")
+
+t3 <- game_sales %>%
+  select(Year,Platform,Name) %>%
+  aggregate(.~Platform+Year, FUN = sum)
+
+t3 <- t3[order(t3$Platform),]
+
+library(geomtextpath)
+t3 %>%
+  ggplot(aes(x=Platform,y=Year))+
+  geom_textline(aes(label=Platform),size=1.7,hjust=0.2)+
+  scale_y_continuous(breaks=seq(1980,2016,by=2))+
+  #scale_color_gradient(low="red",high="green")+
+  geom_hline(yintercept = seq(1980,2016,by=2), linetype = "dashed", color = "black", alpha = 0.5, size=0.1)+
+  coord_flip()+
+  theme_classic(base_size = 10)+
+  theme(
+    axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)
+    ,plot.title = element_text(color = "black", size = 32, face = "bold")
+    ,plot.subtitle = element_text(size = 25, face = "bold")
+  )
+
+rm(list = c('t','t1','t2'))
+```
+
+
+
+
+
+
+<br/>
+
 </details>
 
 <br/>
 
 ___
 
-<br/>
+# Modele predykcyjne
 
-# Model predykcyjny - `TidyModels`
+<details>
+
+  <summary>Modele predykcyjne</summary>
+
+## Model predykcyjny - `TidyModels`
 
 <details>
 
@@ -456,7 +539,7 @@ library(textrecipes)
 
 ```{r}
 ranger_recipe <- 
-  recipe(formula = Global_Sales ~ Platform + Genre + Publisher + Year, data = sales_train) 
+  recipe(formula = Global_Sales ~ Platform + Genre + Publisher, data = sales_train) 
 
 ranger_spec <- 
   rand_forest(mtry = tune(), min_n = tune(), trees = 1000) %>% 
@@ -509,11 +592,7 @@ collect_predictions(sales_fit) %>%
 
 <br/>
 
-___
-
-<br/>
-
-# M-method random forest model
+## M-method random forest model
 
 <details>
 
@@ -549,7 +628,7 @@ rf_wf <- workflow() %>%
   add_recipe(rec) %>%
   add_model(rf)
 
-# save(rf_res,file="dane/rf_res.rda")
+#save(rf_res,file="dane/rf_res.rda")
 load("dane/rf_res.rda")
 # rf_res <-
 #   rf_wf %>%
@@ -604,11 +683,10 @@ rf_fit %>%
 result <- rf_fit %>%
   collect_predictions() %>%
   select(.pred, Global_Sales)
-
-mean(result$Global_Sales - result$.pred)*100000
 ```
 
 </details>
 
+</details>
 
 
