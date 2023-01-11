@@ -42,10 +42,10 @@ pomysły:
   - (platformy/lata)okres życia platform na podstawie roku publikacji #31 platofrm
   - ??? (sprzedaż w regionach/sprzedaż)wykres kołowy! udziału w sprzedarzy poszczególnych rynków #chciałem zrobić z podziałem na lata zrobinym na interaktywnej osi
   - (gatunki/lata)jakie gatunki były popularne w danym okresie czasu #12 gatunków
-  - (wydawcy/gatunki)z jakich gatunkow dani wydawcy sa najbardziej znani
-  - 1(wydawca / sprzedaż w regionach)zależność wydawcy ze sprzedarzą w danym regionie 
-  - (gatunki/ sprzedaż w regionach)zależność gatunku ze sprzedarzą w danym regionie
-  - (platformy/region)sprzedarz na konkretne platformy w danym regionie
+  - (wydawcy/gatunki)z jakich gatunkow dani wydawcy sa najbardziej znani #tabelka
+  - 1(wydawca / sprzedaż w regionach)zależność wydawcy ze sprzedarzą w danym regionie #ze względu na ilość wydawców zrobić "najlepsi wydawcy w danych regionach #tabelka
+  - (gatunki/regiony)najlepsze gatunki w danym regionie #tabelka
+  - (platformy/region)najlepsze platformy w danym regionie 
   - !model prognozujacy sprzedarz na podstawie wydawcy, platformy i gatunku, roku - las losowy
 
 zależność: chi^2 niezależności
@@ -59,11 +59,15 @@ rok utworzenia zbioru 2020
 ```
 
 ```{r biblioteki, include=FALSE}
-library(tidyverse)
-library(ggplot2)
-library(kableExtra)
-library(doParallel)
+library(tidyverse) #ogólne
+library(ggplot2) #wykresy
+library(kableExtra) #tabelki
+library(doParallel) #przyśpieszenie sprzętowe
 registerDoParallel(cores = 8)
+library(magick) #animowane wykresy
+library(gganimate) #animowane wykresy
+library(ggiraph) #interaktywne wykresy
+library(ggthemes) #wykresy
 ```
 
 # Przedstawienie zbioru danych
@@ -210,6 +214,7 @@ missings <- game_sales[which(is.na(game_sales$Year) | is.na(game_sales$Publisher
 #median(missings$Rank)
 #mean(missings$Global_Sales)
 
+#jakie statystyki mają wartości z brakami
 tibble("Średnia z `Rank`"= mean(missings$Rank),"Mediana z `Global_Sales`"= median(missings$Global_Sales)) %>%
   kbl() %>%
   kable_styling()
@@ -258,13 +263,13 @@ game_sales <- game_sales[-which(game_sales$Year>2016),]
 
 W zbiorze znalazła się obserwacja, która w znacznym stopniu może zakłamywać statystki, a także utrudniać budowanie modeli predykcyjnych. Jest to obserwacja sklasyfikowana na pierwszej pozycji względem globalnej sprzedaży. 
 
-```{r}
+```{r echo=FALSE}
 head(game_sales,n=1) %>%
   kbl() %>%
   kable_styling()
 ```
 
-Jej wynik globalnej sprzedaży przewyższa ponad dwukrotnie wynik tytułu znajdującego się na drugiej pozycji, a wynika on z faktu, że gra była dołączana za darmo do każdej zakupionej konsoli Wii. 
+Jej wynik globalnej sprzedaży przewyższa ponad dwukrotnie wynik tytułu znajdującego się na drugiej pozycji, a wynika on z faktu, że gra była dołączana za darmo do każdej zakupionej konsoli *Nintendo Wii*. 
 
 Ze względu na znaczący wpływ na otrzymywane wyniki, jaki miała owa obserwacja postanowiłem prowadzić dalsze działania bez uwzględniania powyższej obserwacji.
 
@@ -383,6 +388,8 @@ ___
 
   <summary>Wizualizacja</summary>
   
+### Liczba wydawanych tytułów
+  
 ```{r wykres publikacji, fig.width = 21, fig.height = 10, eval=T, include=T, echo=F}
 game_sales %>%
 ggplot(aes(Year))+
@@ -442,7 +449,7 @@ game_sales %>%
 
 ### Cykl życia platform
 
-```{r echo=FALSE,eval=TRUE,include=TRUE,message=FALSE,warning=FALSE}
+```{r echo=FALSE,eval=TRUE,include=TRUE,message=FALSE,warning=FALSE, fig.width = 21, fig.height = 15}
 t1 <- game_sales %>%
   select(Year,Platform) %>%
   aggregate(.~Platform, FUN = min) %>%
@@ -476,12 +483,12 @@ t3 <- t3[order(t3$Platform),]
 library(geomtextpath)
 t3 %>%
   ggplot(aes(x=Platform,y=Year))+
-  geom_textline(aes(label=Platform),size=1.7,hjust=0.2)+
+  geom_textline(aes(label=Platform),size=4.3)+
   scale_y_continuous(breaks=seq(1980,2016,by=2))+
   #scale_color_gradient(low="red",high="green")+
   geom_hline(yintercept = seq(1980,2016,by=2), linetype = "dashed", color = "black", alpha = 0.5, size=0.1)+
   coord_flip()+
-  theme_classic(base_size = 10)+
+  theme_classic(base_size = 20)+
   theme(
     axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)
     ,plot.title = element_text(color = "black", size = 32, face = "bold")
@@ -491,7 +498,107 @@ t3 %>%
 rm(list = c('t','t1','t2'))
 ```
 
+### Popularność gatunków
 
+```{r echo=F, fig.width = 21, fig.height = 10}
+game_sales %>%
+  select(Year,Genre,Global_Sales) %>%
+  aggregate(.~Genre+Year, FUN = sum) %>%
+  group_by(Year) %>%
+  arrange(Year,desc(Global_Sales)) %>%
+  mutate(Rank=row_number(Year)) %>% #nie podobało mi się użycie rank, bo zwracała wyniki z rangami ogólnymi i z 0.5
+  ungroup() %>%
+  mutate(texto = paste0(Genre, "\n",
+                        Year, ": ",
+                        format(round(Global_Sales*1000000, 0),
+                               big.mark = ","))) %>%
+  ggplot(aes(x=Year,y=Rank,color=Genre))+
+  geom_line()+
+  geom_point()+
+  labs(title="Popularność gatunków gier na przestrzeni lat",
+       x="Rok publikacji",
+       y="",
+       color="Gatunki")+
+  scale_x_continuous(breaks=seq(1980,2016,by=1))+
+  scale_y_reverse(breaks=seq(1,12,by=1))+
+  geom_hline(yintercept = seq(1,12,by=1), linetype = "dashed", color = "black", alpha = 0.4, size=0.7)+
+  theme_classic(base_size = 20)+
+  theme(
+    axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)
+    ,plot.title = element_text(color = "black", size = 22, face = "bold")
+    ,plot.subtitle = element_text(size = 25, face = "bold")
+    ,plot.caption = element_text(face = "italic")
+    ,legend.position = "none"
+  )
+```
+
+```{r echo=F, fig.width = 21, fig.height = 10}
+#interaktywny
+ 
+
+ggdane <- game_sales %>%
+  select(Year,Genre,Global_Sales) %>%
+  aggregate(.~Genre+Year, FUN = sum, drop = FALSE) %>%
+  group_by(Year) %>%
+  arrange(Year,desc(Global_Sales)) %>%
+  # complete(Genre, fill=list(Global_Sales = 0)) %>%
+  # mutate(Rank=round(13-rank(Global_Sales,na.last = TRUE,ties.method="last"))) %>%
+  mutate(Rank=row_number(Year)) %>%
+  ungroup() %>%
+  mutate(texto = paste0(Genre, "\n",
+                        Year, ": ",
+                        format(round(Global_Sales*1000000, 0),
+                               big.mark = ","), "\n", 
+                        "Pozycja: ", Rank))
+
+
+gg <- ggdane %>%
+  ggplot(aes(x=Year,y=Rank,color=Genre,data_id=Genre,group=Genre,label=Genre))+
+  scale_x_continuous(breaks=seq(1980,2016,by=1))+
+  scale_y_reverse(breaks=seq(12,1,by=-1))+
+  #geom_hline(yintercept = seq(1,12,by=1), linetype = "dashed", color = "black", alpha = 0.4, size=0.7)+
+  geom_line_interactive(size = 1.2,
+                        alpha = 0.4) +
+  geom_point_interactive(
+                aes(tooltip = texto), #specifies tooltip for ggiraph
+                         fill = "white",
+                         size = 2.5,
+                         stroke = 1.5,
+                         shape = 21) +
+  geom_text_interactive(data = ggdane %>% 
+                          group_by(Genre) %>%
+                          filter(Year == max(Year)),
+                        aes(x = Year + 1.1, y = Rank,
+                            color = Genre, 
+                            label = Genre),
+                        check_overlap = T)+
+  labs(y = NULL, x = "Rok publikacji") +
+  theme_classic(base_size = 20)+
+  theme(
+    axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)
+    ,plot.title = element_text(color = "black", size = 22, face = "bold")
+    ,plot.subtitle = element_text(size = 25, face = "bold")
+    ,plot.caption = element_text(face = "italic")
+    ,legend.position = "none"
+  )
+
+girafe(ggobj = gg, 
+       width_svg = 21, height_svg = 10, #sizes the output plot
+       options = list(
+          opts_tooltip(
+            opacity = 0.8, #opacity of the background box 
+            css = "background-color:#4c6061; color:white; padding:10px; border-radius:5px;"),
+       opts_hover_inv(css = "stroke-width: 1;opacity:0.6;"),
+       opts_hover(css = "stroke-width: 4; opacity: 1;")
+       )
+)
+
+# game_sales[which(game_sales$Genre=="Puzzle"&game_sales$Year==1982),]
+# game_sales[which(game_sales$Genre=="Shooter"&game_sales$Year==1984),]
+# game_sales[which(game_sales$Genre=="Platform"&game_sales$Year==1985),]
+# game_sales[which(game_sales$Genre=="Action"&game_sales$Year==1986),]
+# game_sales[which(game_sales$Genre=="Platform"&game_sales$Year==1988),]
+```
 
 
 
