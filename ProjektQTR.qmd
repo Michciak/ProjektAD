@@ -43,9 +43,9 @@ pomysły:
   - ??? (sprzedaż w regionach/sprzedaż)wykres kołowy! udziału w sprzedarzy poszczególnych rynków #chciałem zrobić z podziałem na lata zrobinym na interaktywnej osi
   - (gatunki/lata)jakie gatunki były popularne w danym okresie czasu #12 gatunków
   - (wydawcy/gatunki)z jakich gatunkow dani wydawcy sa najbardziej znani #tabelka
-  - 1(wydawca / sprzedaż w regionach)zależność wydawcy ze sprzedarzą w danym regionie #ze względu na ilość wydawców zrobić "najlepsi wydawcy w danych regionach #tabelka
-  - (gatunki/regiony)najlepsze gatunki w danym regionie #tabelka
-  - (platformy/region)najlepsze platformy w danym regionie 
+  - 1(wydawca / sprzedaż w regionach)zależność wydawcy ze sprzedarzą w danym regionie #ze względu na ilość wydawców zrobić "najlepsi wydawcy w danych regionach #tabelka #ancova
+  - (gatunki/regiony)najlepsze gatunki w danym regionie #tabelka #mapka
+  - (platformy/region)najlepsze platformy w danym regionie #tableka #mapka
   - !model prognozujacy sprzedarz na podstawie wydawcy, platformy i gatunku, roku - las losowy
 
 zależność: chi^2 niezależności
@@ -69,6 +69,7 @@ library(gganimate) #animowane wykresy
 library(ggiraph) #interaktywne wykresy
 library(ggthemes) #wykresy
 library(highcharter) #interaktywne placki
+#library(geomtextpath) #był potrzebny do cyklu zycia platform (nieinteraktywnego)
 ```
 
 # Przedstawienie zbioru danych
@@ -278,6 +279,43 @@ Ze względu na znaczący wpływ na otrzymywane wyniki, jaki miała owa obserwacj
 game_sales <- game_sales[-1,]
 ```
 
+<br/>
+
+Ponad to wśród danych znalazła się gra, której rok wydania jest dużo wcześniejszy od innych gier wydanych na tę platformę.
+
+```{r echo=FALSE}
+game_sales[which(game_sales$Platform=="DS"),] %>%
+  ggplot(aes(x=Year))+
+  geom_boxplot()+
+  scale_x_continuous(breaks=seq(1980,2016,by=1))+
+  labs(
+    title="Gry wydane na Nintendo DS",
+    x="Rok wydania"
+  )+
+  theme_classic(base_size = 10)+
+  theme(
+    axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)
+    ,plot.title = element_text(color = "black", size = 17, face = "bold")
+    ,plot.subtitle = element_text(size = 25, face = "bold")
+    ,plot.caption = element_text(face = "italic")
+    ,axis.text.y = element_blank()
+    ,legend.position = "none"
+    ,legend.background = element_rect(fill = "white")
+    ,legend.title = element_blank()
+  )
+
+game_sales[which(game_sales$Platform=="DS"),] %>%
+  arrange(Year) %>%
+  select(Rank,Name,Platform,Year,Genre,Global_Sales) %>%
+  head(1) %>%
+  kbl() %>%
+  kable_styling()
+```
+Platforma, na którą został wydany ów tytuł, miała premierę 21.11.2004, więc jest to niemożliwe, by jakakolwiek gra została na nią wydana przed 2004 rokiem. Udało mi się ustalić, że prawidłowa data premiery tego tytułu do 07.05.2010r. 
+
+```{r}
+game_sales[which(game_sales$Platform=="DS"&game_sales$Year==1985),"Year"] <- 2010
+```
 
 ```{r eval=TRUE, include=TRUE, echo=FALSE}
 rownames(game_sales) <- 1:nrow(game_sales)
@@ -389,7 +427,7 @@ ___
 
   <summary>Wizualizacja</summary>
   
-### Liczba wydawanych tytułów
+### Tytuły
   
 ```{r wykres publikacji, fig.width = 21, fig.height = 10, eval=T, include=T, echo=F}
 game_sales %>%
@@ -401,7 +439,7 @@ ggplot(aes(Year))+
 #  scale_x_discrete()+
 #  scale_x_discrete(breaks = 1980:2020)+
   scale_x_continuous(breaks=seq(1980,2016,by=2))+
-  geom_hline(yintercept = c(500,1000), linetype = "dashed", color = "black", alpha = 0.8, size=1.3)+
+  geom_hline(yintercept = c(500,1000), linetype = "dashed", color = "black", alpha = 0.8, linewidth=1.3)+
   theme_classic(base_size = 40)+
   theme(
     axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)
@@ -448,107 +486,132 @@ game_sales %>%
 
 <br/>
 
-### Cykl życia platform
+### Platformy 
 
 ```{r echo=FALSE,eval=TRUE,include=TRUE,message=FALSE,warning=FALSE, fig.width = 21, fig.height = 15}
-t1 <- game_sales %>%
-  select(Year,Platform) %>%
-  aggregate(.~Platform, FUN = min) %>%
-  pivot_longer(-Platform) %>%
-  mutate(min = value) %>%
-  select(Platform, min)
-
-
-t2 <- game_sales %>%
-  select(Year,Platform) %>%
-  aggregate(.~Platform, FUN = max) %>%
-  pivot_longer(-Platform) %>%
-  mutate(max = value) %>%
-  select(Platform, max)
-
-t <- merge(t1,t2, by="Platform", sort=T)
-
-t[order(t$min),] %>%
-  `row.names<-`(NULL) %>%
-  `colnames<-`(c("Platforma","Rok startu","Rok końca")) %>%
-  kbl() %>%
-  kable_styling()%>%
-  scroll_box(width = "100%", height = "200px")
+# t1 <- game_sales %>%
+#   select(Year,Platform) %>%
+#   aggregate(.~Platform, FUN = min) %>%
+#   pivot_longer(-Platform) %>%
+#   mutate(min = value) %>%
+#   select(Platform, min)
+# 
+# 
+# t2 <- game_sales %>%
+#   select(Year,Platform) %>%
+#   aggregate(.~Platform, FUN = max) %>%
+#   pivot_longer(-Platform) %>%
+#   mutate(max = value) %>%
+#   select(Platform, max)
+# 
+# t <- merge(t1,t2, by="Platform", sort=T)
+# 
+# t[order(t$min),] %>%
+#   `row.names<-`(NULL) %>%
+#   `colnames<-`(c("Platforma","Rok startu","Rok końca")) %>%
+#   kbl() %>%
+#   kable_styling()%>%
+#   scroll_box(width = "100%", height = "200px")
+#
+# #niepotrzebne po wykonaniu interaktywnego
 
 t3 <- game_sales %>%
   select(Year,Platform,Name) %>%
   aggregate(.~Platform+Year, FUN = sum) 
 
-t3 <- t3[order(t3$Platform),] #%>%
-  # mutate(texto = paste0(Platform, "\n",
-  #                       Year, ": ",
-  #                       format(round(Name*1000000, 0),
-  #                              big.mark = ",")))
+t3 <- t3[order(t3$Platform),] %>%
+  group_by(Platform)%>%
+  mutate(texto = paste0(Platform, "\n",
+                        min(Year), "-",max(Year)
+                        ))
 
-library(geomtextpath)
-t3 %>%
-  ggplot(aes(x=Platform,y=Year))+
-  geom_textline(aes(label=Platform),size=4.3)+
-  scale_y_continuous(breaks=seq(1980,2016,by=2))+
-  #scale_color_gradient(low="red",high="green")+
-  geom_hline(yintercept = seq(1980,2016,by=2), linetype = "dashed", color = "black", alpha = 0.5, size=0.1)+
-  coord_flip()+
-  theme_classic(base_size = 20)+
-  theme(
-    axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)
-    ,plot.title = element_text(color = "black", size = 32, face = "bold")
-    ,plot.subtitle = element_text(size = 25, face = "bold")
-  )
-
-
-# gg <- t3 %>%
-#   ggplot(aes(y=Platform,x=Year))+
-#   scale_x_continuous(breaks=seq(1980,2016,by=2))+
-#   #scale_color_gradient(low="red",high="green")+
-#   geom_hline(xintercept = seq(1980,2016,by=1), linetype = "dashed", color = "black", alpha = 0.5, size=0.1)+
-#   geom_line_interactive(size = 1.2,
-#                         alpha = 0.4) +
-#   geom_point_interactive(data = t3 %>% 
-#                           group_by(Platform) %>%
-#                           filter(Year == max(Year) | Year == min(Year)),
-#                         aes(tooltip = texto), #specifies tooltip for ggiraph
-#                           fill = "white",
-#                           size = 2.5,
-#                           stroke = 1.5,
-#                           shape = 21) +
-#   geom_text_interactive(data = ggdane %>% 
-#                           group_by(Genre) %>%
-#                           filter(Year == max(Year)),
-#                         aes(x = Year + 0.7, y = Platform,
-#                             color = Genre, 
-#                             label = Genre),
-#                         check_overlap = T)+
+# #nieinteraktywny
+# t3 %>%
+#   ggplot(aes(x=Platform,y=Year))+
+#   geom_textline(aes(label=Platform),size=4.3)+
+#   scale_y_continuous(breaks=seq(1980,2016,by=2))+
+#   geom_hline(yintercept = seq(1980,2016,by=2), linetype = "dashed", color = "black", alpha = 0.5, size=0.1)+
+#   coord_flip()+
 #   theme_classic(base_size = 20)+
 #   theme(
 #     axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)
 #     ,plot.title = element_text(color = "black", size = 32, face = "bold")
 #     ,plot.subtitle = element_text(size = 25, face = "bold")
 #   )
-# 
-# girafe(ggobj = gg, 
-#        width_svg = 21, height_svg = 10, #sizes the output plot
-#        options = list(
-#           opts_tooltip(
-#             opacity = 0.8, #opacity of the background box 
-#             css = "background-color:#4c6061; color:white; padding:10px; border-radius:5px;"),
-#        opts_hover_inv(css = "stroke-width: 1;opacity:0.6;"),
-#        opts_hover(css = "stroke-width: 4; opacity: 1;")
-#        )
-# )
+
+# interaktywny
+gg <- t3 %>%
+  ggplot(aes(y=Platform,x=Year))+
+  scale_x_continuous(breaks=seq(1980,2016,by=1))+
+  # geom_hline(xintercept = seq(1980,2016,by=1), linetype = "dashed", color = "black", alpha = 0.5, size=0.1)+
+  geom_line_interactive(size = 1.2,
+                        alpha = 0.4,
+                        aes(tooltip = texto)) +
+  geom_point_interactive(data = t3 %>%
+                          group_by(Platform) %>%
+                          filter(Year == max(Year) | Year == min(Year)),
+                        aes(tooltip = texto), #specifies tooltip for ggiraph
+                          fill = "white",
+                          size = 2.5,
+                          stroke = 1.5,
+                          shape = 21) +
+  geom_text_interactive(data = t3 %>%
+                          group_by(Platform) %>%
+                          filter(Year == max(Year)),
+                        aes(x = Year + 0.7, y = Platform,
+                            color = Platform,
+                            label = Platform),
+                        check_overlap = T)+
+  theme_classic(base_size = 20)+
+  theme(
+    axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)
+    ,plot.title = element_text(color = "black", size = 32, face = "bold")
+    ,plot.subtitle = element_text(size = 25, face = "bold")
+    ,legend.position = "none"
+  )
+
+girafe(ggobj = gg,
+       width_svg = 21, height_svg = 10, #sizes the output plot
+       options = list(
+          opts_tooltip(
+            opacity = 0.8, #opacity of the background box
+            css = "background-color:#4c6061; color:white; padding:10px; border-radius:5px;"),
+       opts_hover_inv(css = "stroke-width: 1;opacity:0.6;"),
+       opts_hover(css = "stroke-width: 4; opacity: 1;")
+       )
+)
 
 
 
 rm(list = c('t','t1','t2'))
 ```
 
-### Popularność gatunków
+```{r eval=TRUE, echo=FALSE}
+game_sales %>%
+  mutate(Sales=Global_Sales*10000000) %>%
+  select(Platform,Sales) %>%
+  aggregate(.~Platform, FUN = sum, drop = FALSE) %>%
+  group_by(Platform) %>%
+  arrange(desc(Sales),Platform) %>%
+  ungroup() %>%
+  mutate(texto = paste0(Platform," ", 
+                        round(Sales/sum(Sales)*100,2),"%")) %>%
+    hchart("pie", 
+           hcaes(x = texto, y = Sales),
+           name = "Sprzedanych kopii gier"
+    ) %>%
+    hc_title(
+      text = "Udział platform w rynku growym w latach 1980-2016",
+      margin = 20,
+      align = "left",
+      style = list(color = "black", useHTML = TRUE)
+    )
 
-```{r echo=F, fig.width = 21, fig.height = 10}
+```
+
+### Gatunki
+
+```{r echo=F, eval=FALSE, fig.width = 21, fig.height = 10}
 game_sales %>%
   select(Year,Genre,Global_Sales) %>%
   aggregate(.~Genre+Year, FUN = sum) %>%
@@ -655,33 +718,7 @@ girafe(ggobj = gg,
 # game_sales[which(game_sales$Genre=="Platform"&game_sales$Year==1988),]
 ```
 
-#Udział platfrom w rynkach
 
-```{r}
-game_sales %>%
-  mutate(Sales=Global_Sales*1000000) %>%
-  select(Platform,Sales) %>%
-  aggregate(.~Platform, FUN = sum, drop = FALSE) %>%
-  group_by(Platform) %>%
-  arrange(desc(Sales),Platform) %>%
-  ungroup() %>%
-  mutate(texto = paste0(Platform," ", 
-                        round(Sales/sum(Sales)*100,2),"%")) %>%
-    hchart("pie", 
-           hcaes(x = texto, y = Sales),
-           name = "Sprzedanych kopii gier"
-    ) %>%
-    hc_title(
-      text = "Udział platform w rynku growym w latach 1980-2016",
-      margin = 20,
-      align = "left",
-      style = list(color = "black", useHTML = TRUE)
-    )
-
-
-
-
-```
 
 
 <br/>
