@@ -68,6 +68,7 @@ library(magick) #animowane wykresy
 library(gganimate) #animowane wykresy
 library(ggiraph) #interaktywne wykresy
 library(ggthemes) #wykresy
+library(highcharter) #interaktywne placki
 ```
 
 # Przedstawienie zbioru danych
@@ -476,9 +477,13 @@ t[order(t$min),] %>%
 
 t3 <- game_sales %>%
   select(Year,Platform,Name) %>%
-  aggregate(.~Platform+Year, FUN = sum)
+  aggregate(.~Platform+Year, FUN = sum) 
 
-t3 <- t3[order(t3$Platform),]
+t3 <- t3[order(t3$Platform),] #%>%
+  # mutate(texto = paste0(Platform, "\n",
+  #                       Year, ": ",
+  #                       format(round(Name*1000000, 0),
+  #                              big.mark = ",")))
 
 library(geomtextpath)
 t3 %>%
@@ -494,6 +499,49 @@ t3 %>%
     ,plot.title = element_text(color = "black", size = 32, face = "bold")
     ,plot.subtitle = element_text(size = 25, face = "bold")
   )
+
+
+# gg <- t3 %>%
+#   ggplot(aes(y=Platform,x=Year))+
+#   scale_x_continuous(breaks=seq(1980,2016,by=2))+
+#   #scale_color_gradient(low="red",high="green")+
+#   geom_hline(xintercept = seq(1980,2016,by=1), linetype = "dashed", color = "black", alpha = 0.5, size=0.1)+
+#   geom_line_interactive(size = 1.2,
+#                         alpha = 0.4) +
+#   geom_point_interactive(data = t3 %>% 
+#                           group_by(Platform) %>%
+#                           filter(Year == max(Year) | Year == min(Year)),
+#                         aes(tooltip = texto), #specifies tooltip for ggiraph
+#                           fill = "white",
+#                           size = 2.5,
+#                           stroke = 1.5,
+#                           shape = 21) +
+#   geom_text_interactive(data = ggdane %>% 
+#                           group_by(Genre) %>%
+#                           filter(Year == max(Year)),
+#                         aes(x = Year + 0.7, y = Platform,
+#                             color = Genre, 
+#                             label = Genre),
+#                         check_overlap = T)+
+#   theme_classic(base_size = 20)+
+#   theme(
+#     axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)
+#     ,plot.title = element_text(color = "black", size = 32, face = "bold")
+#     ,plot.subtitle = element_text(size = 25, face = "bold")
+#   )
+# 
+# girafe(ggobj = gg, 
+#        width_svg = 21, height_svg = 10, #sizes the output plot
+#        options = list(
+#           opts_tooltip(
+#             opacity = 0.8, #opacity of the background box 
+#             css = "background-color:#4c6061; color:white; padding:10px; border-radius:5px;"),
+#        opts_hover_inv(css = "stroke-width: 1;opacity:0.6;"),
+#        opts_hover(css = "stroke-width: 4; opacity: 1;")
+#        )
+# )
+
+
 
 rm(list = c('t','t1','t2'))
 ```
@@ -530,6 +578,13 @@ game_sales %>%
     ,plot.caption = element_text(face = "italic")
     ,legend.position = "none"
   )
+
+
+
+
+
+
+
 ```
 
 ```{r echo=F, fig.width = 21, fig.height = 10}
@@ -600,7 +655,33 @@ girafe(ggobj = gg,
 # game_sales[which(game_sales$Genre=="Platform"&game_sales$Year==1988),]
 ```
 
+#Udział platfrom w rynkach
 
+```{r}
+game_sales %>%
+  mutate(Sales=Global_Sales*1000000) %>%
+  select(Platform,Sales) %>%
+  aggregate(.~Platform, FUN = sum, drop = FALSE) %>%
+  group_by(Platform) %>%
+  arrange(desc(Sales),Platform) %>%
+  ungroup() %>%
+  mutate(texto = paste0(Platform," ", 
+                        round(Sales/sum(Sales)*100,2),"%")) %>%
+    hchart("pie", 
+           hcaes(x = texto, y = Sales),
+           name = "Sprzedanych kopii gier"
+    ) %>%
+    hc_title(
+      text = "Udział platform w rynku growym w latach 1980-2016",
+      margin = 20,
+      align = "left",
+      style = list(color = "black", useHTML = TRUE)
+    )
+
+
+
+
+```
 
 
 <br/>
