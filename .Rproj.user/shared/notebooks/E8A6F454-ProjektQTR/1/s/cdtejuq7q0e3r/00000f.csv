@@ -1,0 +1,3 @@
+"0","game_sales$Name <- as.factor(game_sales$Name)"
+"0","game_sales$Platform <- as.factor(game_sales$Platform)"
+"0","game_sales$Publisher <- as.factor(game_sales$Publisher)"

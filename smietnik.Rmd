@@ -1,0 +1,96 @@
+---
+title: "Las2"
+author: "Michał Koziński"
+date: "2023-01-15"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, eval = FALSE)
+```
+
+<details>
+
+  <summary>Modele predykcyjne</summary>
+
+## Model predykcyjny - `Ranger tune`
+
+<details>
+
+  <summary>Model predykcyjny 1</summary>
+
+<br/>
+
+```{r message=FALSE, warning=FALSE}
+# podział zbioru
+library(tidymodels)
+set.seed(1410)
+sales_split <- initial_split(game_sales, strata = Global_Sales)
+sales_train <- training(sales_split)
+sales_test <- testing(sales_split)
+
+sales_folds <- vfold_cv(sales_train, strata = Global_Sales)
+sales_folds
+```
+
+```{r eval=TRUE,include=FALSE,echo=FALSE}
+library(usemodels)
+
+use_ranger(Global_Sales ~ Platform+Genre+Publisher, data = sales_train)
+
+library(textrecipes)
+```
+
+```{r}
+ranger_recipe <- 
+  recipe(formula = Global_Sales ~ Platform + Genre + Publisher, data = sales_train) 
+
+ranger_spec <- 
+  rand_forest(mtry = tune(), min_n = tune(), trees = 1000) %>% 
+  set_mode("regression") %>% 
+  set_engine("ranger") 
+
+ranger_workflow <- 
+  workflow() %>% 
+  add_recipe(ranger_recipe) %>% 
+  add_model(ranger_spec) 
+
+set.seed(6164)
+#save(ranger_tune,file = "dane/ranger_tune.rda")
+load("dane/ranger_tune.rda")
+# ranger_tune <-
+#   tune_grid(ranger_workflow,
+#             resamples = sales_folds,
+#             grid = 11)
+```
+
+```{r}
+show_best(ranger_tune, metric = "rmse")
+show_best(ranger_tune, metric = "rsq")
+#show_best(ranger_tune, metric = "mae")
+
+autoplot(ranger_tune)
+
+final_rf <- ranger_workflow %>%
+  finalize_workflow(select_best(ranger_tune, metric = "rmse"))
+
+final_rf
+
+sales_fit <- last_fit(final_rf,sales_split)
+sales_fit
+
+collect_metrics(sales_fit)
+```
+
+```{r}
+collect_predictions(sales_fit) %>%
+  ggplot(aes(Global_Sales, .pred)) +
+  geom_abline(lty = 2, color = "gray50") +
+  geom_point(alpha = 0.5, color = "midnightblue") +
+  coord_fixed()
+
+
+
+```
+
+</details>

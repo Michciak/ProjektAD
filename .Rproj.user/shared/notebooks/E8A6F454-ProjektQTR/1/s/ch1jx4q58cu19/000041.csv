@@ -1,0 +1,6 @@
+"0","#uczenie ostatecznego modelu
+rf_fit <- rf_final %>%
+  last_fit(sales_split, metrics = meas)
+"
+"2","[33m![39m [33mtrain/test split: preprocessor 1/1, model 1/1: 10 columns were requested but there were 3 predictors in the data. 3 will be used.[39m
+"

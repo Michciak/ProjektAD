@@ -1,0 +1,5 @@
+"0","data.frame(game_sales[which(game_sales$Year>2016),]) %>%"
+"0","  `rownames<-`(NULL) %>%"
+"0","  select(Rank,Name,Platform,Year,Genre,Publisher,Global_Sales) %>%"
+"0","  kbl() %>%"
+"0","  kable_styling()"

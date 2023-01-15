@@ -20,7 +20,7 @@ date: "`r Sys.Date()`"
 }
 </style>
 
-```{notatki eval=FALSE, include=FALSE}
+```{r notatki, eval=FALSE, include=FALSE}
 
 opracowanie: <https://www.kaggle.com/code/alimara/vg-sales-eda>
 
@@ -70,6 +70,10 @@ library(ggiraph) #interaktywne wykresy
 library(ggthemes) #wykresy
 library(highcharter) #interaktywne placki
 #library(geomtextpath) #był potrzebny do cyklu zycia platform (nieinteraktywnego)
+library(tidymodels) #las losowy
+library(usemodels) #tuning modeli
+library(textrecipes) #tuning modeli - instrukcja
+library(vip) #porownanie waznosci zmiennych w modelach
 ```
 
 # Przedstawienie zbioru danych
@@ -632,7 +636,7 @@ game_sales %>%
        color="Gatunki")+
   scale_x_continuous(breaks=seq(1980,2016,by=1))+
   scale_y_reverse(breaks=seq(1,12,by=1))+
-  geom_hline(yintercept = seq(1,12,by=1), linetype = "dashed", color = "black", alpha = 0.4, size=0.7)+
+  geom_hline(yintercept = seq(1,12,by=1), linetype = "dashed", color = "black", alpha = 0.4, linewidth=0.7)+
   theme_classic(base_size = 20)+
   theme(
     axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)
@@ -735,7 +739,7 @@ ___
 
   <summary>Modele predykcyjne</summary>
 
-## Model predykcyjny - `TidyModels`
+## Model predykcyjny - `1`
 
 <details>
 
@@ -744,38 +748,29 @@ ___
 <br/>
 
 ```{r message=FALSE, warning=FALSE}
-library(tidymodels)
 set.seed(1410)
 sales_split <- initial_split(game_sales, strata = Global_Sales)
 sales_train <- training(sales_split)
 sales_test <- testing(sales_split)
-
 sales_folds <- vfold_cv(sales_train, strata = Global_Sales)
 sales_folds
 ```
 
 ```{r eval=TRUE,include=FALSE,echo=FALSE}
-library(usemodels)
-
 use_ranger(Global_Sales ~ Platform+Genre+Publisher, data = sales_train)
-
-library(textrecipes)
 ```
 
 ```{r}
 ranger_recipe <- 
   recipe(formula = Global_Sales ~ Platform + Genre + Publisher, data = sales_train) 
-
 ranger_spec <- 
   rand_forest(mtry = tune(), min_n = tune(), trees = 1000) %>% 
   set_mode("regression") %>% 
   set_engine("ranger") 
-
 ranger_workflow <- 
   workflow() %>% 
   add_recipe(ranger_recipe) %>% 
   add_model(ranger_spec) 
-
 set.seed(6164)
 #save(ranger_tune,file = "dane/ranger_tune.rda")
 load("dane/ranger_tune.rda")
@@ -788,17 +783,12 @@ load("dane/ranger_tune.rda")
 ```{r}
 show_best(ranger_tune, metric = "rmse")
 show_best(ranger_tune, metric = "rsq")
-
 autoplot(ranger_tune)
-
 final_rf <- ranger_workflow %>%
   finalize_workflow(select_best(ranger_tune))
-
 final_rf
-
 sales_fit <- last_fit(final_rf,sales_split)
 sales_fit
-
 collect_metrics(sales_fit)
 ```
 
@@ -808,16 +798,13 @@ collect_predictions(sales_fit) %>%
   geom_abline(lty = 2, color = "gray50") +
   geom_point(alpha = 0.5, color = "midnightblue") +
   coord_fixed()
-
-
-
 ```
 
 </details>
 
 <br/>
 
-## M-method random forest model
+## Model predykcyjny - `Random Forest`
 
 <details>
 
@@ -825,11 +812,18 @@ collect_predictions(sales_fit) %>%
 
 <br/>
 
+<details>
+
+  <summary>Budowa modelu</summary>
+  
 ```{r}
-rec <- recipe(Global_Sales ~ Platform + Genre + Publisher + Year,
+#podział zbioru został dokonany przy okazji budowania poprzedniego modelu
+#przepis uczenia
+rec <- recipe(Global_Sales ~ Platform + Genre + Publisher,
               data = sales_train) %>%
   step_normalize(all_numeric_predictors())
 
+#tuningowanie
 rf <- rand_forest(
   mtry = tune(),
   trees = tune(),
@@ -838,22 +832,28 @@ rf <- rand_forest(
   set_mode("regression") %>%
   set_engine("ranger", importance = "impurity")
 
+#potencjalne zakresy parametrów
 params <- extract_parameter_set_dials(rf)
 params <- finalize(params, sales_train)
 
-rs <- vfold_cv(sales_train, v = 5)
+#metoda resamplingu
+rs <- vfold_cv(sales_train, v = 5)#vfold_cv(sales_train, strata = Global_Sales)
 
+#wybór miar do oceny dopasowania
 meas <- metric_set(rsq, rmse, mae)
 
+#grid parametrów do uczenia
 grid <- grid_latin_hypercube(params, size = 10)
 grid %>%
   flextable::flextable()
 
+#workflow
 rf_wf <- workflow() %>%
   add_recipe(rec) %>%
   add_model(rf)
 
-#save(rf_res,file="dane/rf_res.rda")
+#uczenie modelu
+# save(rf_res,file="dane/rf_res.rda")
 load("dane/rf_res.rda")
 # rf_res <-
 #   rf_wf %>%
@@ -863,52 +863,97 @@ load("dane/rf_res.rda")
 #     metrics = meas
 # )
 
+#wyniki uczenia
 rf_res %>%
   collect_metrics() %>%
   flextable::flextable()
 
+#najlepsze modele ze względu na R^2
 rf_res %>%
   show_best(metric = "rsq")
 
+#najlepsze modele ze względu na RMSE
 rf_res %>%
   show_best(metric = "rmse")
 
+#najlepsze modele ze względu na MAE
 rf_res %>% 
   show_best(metric = "mae")
 
 autoplot(rf_res)
 
+# najlepszy okazał się model mtry = 10, trees = 1892 i min_n = 38
+# R^2 = 0.162 (mało)    RMSE = 1.280 (dużo)    MAE = 0.494
+
+# najlepszy okazał się model mtry = 2, trees = 694 i min_n = 16
+# R^2 = 0.171 (mało)    RMSE = 1.282 (dużo)    MAE = 0.492
+
+# ostateczny model
+
 rf_best_param <- select_best(rf_res, metric = "rmse")
 
+#finalizacja workflow'u
 rf_final <- 
   rf_wf %>%
   finalize_workflow(rf_best_param)
 
+#uczenie ostatecznego modelu
 rf_fit <- rf_final %>%
   last_fit(sales_split, metrics = meas)
 
-rf_fit %>%
-  collect_metrics()
-
-rf_fit %>%
-  collect_predictions() %>%
-  select(.pred, Global_Sales) %>%
-  head(n = 20) %>%
-  flextable::flextable()
-
-rf_fit %>%
-  collect_predictions() %>%
-  select(.pred, Global_Sales) %>%
-  ggplot(aes(.pred, Global_Sales)) +
-  geom_jitter(width = 0, alpha = 0.05) +
-  geom_smooth(method = lm, 
-              se = F)
-  #tune::coord_obs_pred()
-
-result <- rf_fit %>%
-  collect_predictions() %>%
-  select(.pred, Global_Sales)
 ```
+
+</details>
+
+<details>
+
+  <summary>Podsumowanie modelu</summary>
+  
+### Paramtetry ostatecznego modelu
+
+```{r echo=FALSE}
+rf_fit %>%
+  collect_metrics() %>%
+  select(.metric,.estimate) %>%
+  `colnames<-`(c("Parametr","Wartość")) %>%
+  mutate(Wartość = round(Wartość,3)) %>%
+  kbl() %>%
+  kable_styling()
+```
+  
+  
+  
+### Porównanie obserwacj i predykcji
+  
+```{r echo=FALSE, warning=FALSE, message=FALSE}
+collect_predictions(rf_fit) %>%
+  #ggplot(aes(Global_Sales, .pred))+
+  ggplot(aes(.pred, Global_Sales)) +
+  scale_x_continuous(breaks = seq(0,16,by=4))+
+  scale_y_continuous(breaks = seq(0,40,by=8))+
+  geom_abline(lty = 2, color = "black") +
+  geom_point(alpha = 0.5, color = "midnightblue") +
+  geom_smooth(method = "lm", se = F)+
+  coord_fixed(ratio=1, expand=T)+
+  coord_flip()+
+  labs(x = "Predykcja", y = "Obserwacja", title = "Wykres zestawienia obserwacji i predykcji")+
+  theme_classic()+
+  theme(plot.title = element_text(color = "black", size = 18, face = "bold")
+        ,panel.grid.major = element_line(colour = "gray80", linewidth = 0.001))
+```
+
+
+### Zestawienie istotności zmiennych
+
+```{r echo=FALSE}
+rf_fit %>% 
+  extract_fit_parsnip() %>%
+  vip() +
+  theme_classic()
+```
+
+  
+</details>
 
 </details>
 
