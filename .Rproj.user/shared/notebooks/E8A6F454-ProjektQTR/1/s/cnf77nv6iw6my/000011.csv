@@ -1,6 +1,0 @@
-"0",""
-"0","# game_sales[which(game_sales$Genre==""Puzzle""&game_sales$Year==1982),]"
-"0","# game_sales[which(game_sales$Genre==""Shooter""&game_sales$Year==1984),]"
-"0","# game_sales[which(game_sales$Genre==""Platform""&game_sales$Year==1985),]"
-"0","# game_sales[which(game_sales$Genre==""Action""&game_sales$Year==1986),]"
-"0","# game_sales[which(game_sales$Genre==""Platform""&game_sales$Year==1988),]"

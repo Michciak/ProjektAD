@@ -1,6 +1,0 @@
-"0","rf_fit %>%"
-"0","  collect_metrics() %>%"
-"0","  select(.metric,.estimate) %>%"
-"0","  `colnames<-`(c(""Parametr"",""Wartość"")) %>%"
-"0","  mutate(Wartość = round(Wartość,3)) %>%"
-"0","  kbl() %>%"

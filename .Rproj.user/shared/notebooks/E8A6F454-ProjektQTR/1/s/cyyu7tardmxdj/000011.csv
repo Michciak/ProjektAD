@@ -1,5 +1,5 @@
 "0",""
 "0","game_sales[which(game_sales$Platform==""DS""),] %>%"
 "0","  select(Rank,Name,Platform,Year,Genre,Global_Sales) %>%"
-"0","  kbl() %>%"
+"0","  head(1) %>%"
 "0","  kable_styling()"
