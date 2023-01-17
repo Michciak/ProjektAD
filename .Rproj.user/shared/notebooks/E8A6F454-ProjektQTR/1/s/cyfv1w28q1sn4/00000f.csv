@@ -1,0 +1,6 @@
+"0","game_sales %>%
+  ggstatsplot::ggnetweenstats(x = Genres, y = Global_Sales, bf.message = F)
+"
+"2","Error in loadNamespace(j <- i[[1L]], c(lib.loc, .libPaths()), versionCheck = vI[[j]]) : 
+  przestrzeń nazw ‘purrr’ 1.0.0 jest już załadowana, ale >= 1.0.1 jest wymagana
+"

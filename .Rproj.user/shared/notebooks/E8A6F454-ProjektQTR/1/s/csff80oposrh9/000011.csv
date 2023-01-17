@@ -1,8 +1,0 @@
-"0","missings <- game_sales[which(is.na(game_sales$Year) | is.na(game_sales$Publisher)),] %>%"
-"0","  mutate(Rank = as.numeric(Rank))"
-"0","#median(missings$Rank)"
-"0","#mean(missings$Global_Sales)"
-"0",""
-"0","#jakie statystyki mają wartości z brakami"
-"0","tibble(""Średnia z `Rank`""= mean(missings$Rank),""Mediana z `Global_Sales`""= median(missings$Global_Sales)) %>%"
-"0","  kable_styling()"
