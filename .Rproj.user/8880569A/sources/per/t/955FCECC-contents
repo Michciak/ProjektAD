@@ -1,0 +1,262 @@
+---
+title: "Las2"
+author: "Michał Koziński"
+date: "2023-01-15"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, eval = FALSE)
+```
+
+<details>
+
+  <summary>Modele predykcyjne</summary>
+
+## Model predykcyjny - `Ranger tune`
+
+<details>
+
+  <summary>Model predykcyjny 1</summary>
+
+<br/>
+
+```{r message=FALSE, warning=FALSE}
+# podział zbioru
+library(tidymodels)
+set.seed(1410)
+sales_split <- initial_split(game_sales, strata = Global_Sales)
+sales_train <- training(sales_split)
+sales_test <- testing(sales_split)
+
+sales_folds <- vfold_cv(sales_train, strata = Global_Sales)
+sales_folds
+```
+
+```{r eval=TRUE,include=FALSE,echo=FALSE}
+library(usemodels)
+
+use_ranger(Global_Sales ~ Platform+Genre+Publisher, data = sales_train)
+
+library(textrecipes)
+```
+
+```{r}
+ranger_recipe <- 
+  recipe(formula = Global_Sales ~ Platform + Genre + Publisher, data = sales_train) 
+
+ranger_spec <- 
+  rand_forest(mtry = tune(), min_n = tune(), trees = 1000) %>% 
+  set_mode("regression") %>% 
+  set_engine("ranger") 
+
+ranger_workflow <- 
+  workflow() %>% 
+  add_recipe(ranger_recipe) %>% 
+  add_model(ranger_spec) 
+
+set.seed(6164)
+#save(ranger_tune,file = "dane/ranger_tune.rda")
+load("dane/ranger_tune.rda")
+# ranger_tune <-
+#   tune_grid(ranger_workflow,
+#             resamples = sales_folds,
+#             grid = 11)
+```
+
+```{r}
+show_best(ranger_tune, metric = "rmse")
+show_best(ranger_tune, metric = "rsq")
+#show_best(ranger_tune, metric = "mae")
+
+autoplot(ranger_tune)
+
+final_rf <- ranger_workflow %>%
+  finalize_workflow(select_best(ranger_tune, metric = "rmse"))
+
+final_rf
+
+sales_fit <- last_fit(final_rf,sales_split)
+sales_fit
+
+collect_metrics(sales_fit)
+```
+
+```{r}
+collect_predictions(sales_fit) %>%
+  ggplot(aes(Global_Sales, .pred)) +
+  geom_abline(lty = 2, color = "gray50") +
+  geom_point(alpha = 0.5, color = "midnightblue") +
+  coord_fixed()
+
+
+
+```
+
+</details>
+
+
+
+
+
+
+```{r text sracapping, eval=FALSE, include=FALSE}
+# pierwsze 12 tytułów alfabetycznie
+head(levels(game_sales$Name), n = 12)
+
+tidytext::unnest_tokens(data.frame(levels(game_sales$Name)))
+
+count(tidytext::unnest_tokens(levels(game_sales$Name)))
+
+levels(game_sales$Genre)
+```
+
+
+
+
+```{r include=FALSE}
+# sunburstR::sunburst(data.frame("Wydawca"=game_sales$Publisher
+#                                "Platforma"=game_sales$Platform, 
+#                                "Gatunek"=game_sales$Genre), width="100%", height=400)
+# 
+# 
+# game_sales %>%
+#   mutate("Wydawca"=Publisher,
+#          "Platforma"=Platform,
+#          "Gatunek"=Genre) %>%
+#   select(Wydawca,Platforma,Gatunek) %>%
+#   d3r::d3_nest(value_cols = "Platforma") %>%
+#   #group_by(Wydawca) %>%
+#   sunburstR::sunburst(count=T,sumNodes = T)
+
+
+```
+
+
+
+
+
+```{r eval=FALSE, include=FALSE}
+Global_Sales_Publisher <- data.frame(aggregate(game_sales$Global_Sales, by=list(Category=game_sales$Publisher), FUN = sum)) %>%
+  `colnames<-`(c("Publisher","Global_Sales"))
+
+# Global_Sales_Publisher %>%
+#   d3r::d3_nest(value_cols = "Global_Sales") %>%
+#   sunburstR::sunburst(width="100%", height=400)
+
+game_sales %>%
+filter(Name=="Test Drive Unlimited")
+```
+
+
+```{r include=FALSE, eval=FALSE}
+head(Global_Sales_Publisher[order(Global_Sales_Publisher$Global_Sales, decreasing=T),],15)
+```
+
+
+
+
+```{r}
+# t1 <- game_sales %>%
+#   select(Year,Platform) %>%
+#   aggregate(.~Platform, FUN = min) %>%
+#   pivot_longer(-Platform) %>%
+#   mutate(min = value) %>%
+#   select(Platform, min)
+# 
+# 
+# t2 <- game_sales %>%
+#   select(Year,Platform) %>%
+#   aggregate(.~Platform, FUN = max) %>%
+#   pivot_longer(-Platform) %>%
+#   mutate(max = value) %>%
+#   select(Platform, max)
+# 
+# t <- merge(t1,t2, by="Platform", sort=T)
+# 
+# t[order(t$min),] %>%
+#   `row.names<-`(NULL) %>%
+#   `colnames<-`(c("Platforma","Rok startu","Rok końca")) %>%
+#   kbl() %>%
+#   kable_styling()%>%
+#   scroll_box(width = "100%", height = "200px")
+#
+# #niepotrzebne po wykonaniu interaktywnego
+
+
+
+# #nieinteraktywny
+# t3 %>%
+#   ggplot(aes(x=Platform,y=Year))+
+#   geom_textline(aes(label=Platform),size=4.3)+
+#   scale_y_continuous(breaks=seq(1980,2016,by=2))+
+#   geom_hline(yintercept = seq(1980,2016,by=2), linetype = "dashed", color = "black", alpha = 0.5, size=0.1)+
+#   coord_flip()+
+#   theme_classic(base_size = 20)+
+#   theme(
+#     axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)
+#     ,plot.title = element_text(color = "black", size = 32, face = "bold")
+#     ,plot.subtitle = element_text(size = 25, face = "bold")
+#   )
+
+
+rm(list = c('t','t1','t2'))
+```
+
+
+
+
+
+```{r echo=F, eval=FALSE, fig.width = 21, fig.height = 10}
+game_sales %>%
+  select(Year,Genre,Global_Sales) %>%
+  aggregate(.~Genre+Year, FUN = sum) %>%
+  group_by(Year) %>%
+  arrange(Year,desc(Global_Sales)) %>%
+  mutate(Rank=row_number(Year)) %>% #nie podobało mi się użycie rank, bo zwracała wyniki z rangami ogólnymi i z 0.5
+  ungroup() %>%
+  mutate(texto = paste0(Genre, "\n",
+                        Year, ": ",
+                        format(round(Global_Sales*1000000, 0),
+                               big.mark = ","))) %>%
+  ggplot(aes(x=Year,y=Rank,color=Genre))+
+  geom_line()+
+  geom_point()+
+  labs(title="Popularność gatunków gier na przestrzeni lat",
+       x="Rok publikacji",
+       y="",
+       color="Gatunki")+
+  scale_x_continuous(breaks=seq(1980,2016,by=1))+
+  scale_y_reverse(breaks=seq(1,12,by=1))+
+  geom_hline(yintercept = seq(1,12,by=1), linetype = "dashed", color = "black", alpha = 0.4, linewidth=0.7)+
+  theme_classic(base_size = 20)+
+  theme(
+    axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)
+    ,plot.title = element_text(color = "black", size = 22, face = "bold")
+    ,plot.subtitle = element_text(size = 25, face = "bold")
+    ,plot.caption = element_text(face = "italic")
+    ,legend.position = "none"
+  )
+```
+
+
+
+
+
+```{r}
+diamonds %>% 
+  count(clarity)
+
+diamonds %>% 
+  mutate(clarity = case_when(
+    clarity %in% c("I1", "IF") ~ "Inne"
+  ))
+
+diamonds %>% filter(clarity %in% c("I1","IF"))
+
+diamonds$clarity <- factor(diamonds$clarity, ordered = F)
+fct_collapse(diamonds$clarity, other = c("IF", "I1"))
+
+
+
+```

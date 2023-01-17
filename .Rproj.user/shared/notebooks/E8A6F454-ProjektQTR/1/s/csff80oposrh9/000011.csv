@@ -5,5 +5,4 @@
 "0",""
 "0","#jakie statystyki mają wartości z brakami"
 "0","tibble(""Średnia z `Rank`""= mean(missings$Rank),""Mediana z `Global_Sales`""= median(missings$Global_Sales)) %>%"
-"0","  kbl() %>%"
 "0","  kable_styling()"
