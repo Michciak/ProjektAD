@@ -1,0 +1,4 @@
+"0","heatmap(housetasks,scale=""col"",Colv=NA, col=kolory)"
+"2","Error in heatmap(housetasks, scale = ""col"", Colv = NA, col = kolory) : 
+  object 'housetasks' not found
+"

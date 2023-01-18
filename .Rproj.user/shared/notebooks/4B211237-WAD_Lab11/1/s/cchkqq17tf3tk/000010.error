@@ -1,0 +1,1 @@
+{"frames":[{"func":"heatmap(housetasks, scale = \"col\", Colv = NA, col = kolory)","file":"","line_number":0,"end_line_number":0,"character_number":0,"end_character_number":0}],"message":"Error in heatmap(housetasks, scale = \"col\", Colv = NA, col = kolory) : \n  object 'housetasks' not found\n"}

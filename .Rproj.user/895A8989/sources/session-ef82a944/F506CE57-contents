@@ -1,0 +1,369 @@
+---
+title: "WAD_lab11"
+author: "Michał Koziński"
+format: 
+  html:
+    theme: darkly
+    toc: true
+    embed-resources: true
+---
+
+# Analiza korespondencji
+
+Analiza korespondencji jest metodą statystki wielowymiarowej, która przeznaczona jest do analizy zmiennych o charakterze jakościowym, tj. mierzonych na słabych skalach pomiaru (nominalna, porządkowa, przedziałowa). Metoda ta pozwala na graficzne przedstawienie wyników analizy danych w postaci mapy percepcji w niskowymiarowej przestrzeni,
+
+Problem:
+
+Obserwujemy 2 zmienne jakościowe. Pierwsza zmienna przyjmuje wartości z $H$ poziomów, druga z $J$ poziomów.
+Interesuje nas, czy zmienne te są od siebie niezależne, a jeżeli nie są niezależne, to które kombinacje poziomów występują ze sobą znacznie częściej. Dane z którymi mamy do czynienia to macierz kontyngencji (tabela wielodzielcza) o wymiarach $H \times J$ wyznaczona dla dwóch zmiennych o odpowiednio $H$ i $J$ poziomach. Jeżeli $H$ i $J$ są małe, to taką macierz można ogarnąc rzutem oka, JEdnak dla zmiennych występujących na wielu poziomach potrzebne są dodatkowe narzędzia.
+
+```{r}
+library(tidyverse)
+
+#zbiór
+library(factoextra)
+data(housetasks)
+
+library(FactoMineR)
+
+#do wizualizacji
+library(gplots)
+library(knitr)
+library(RColorBrewer)
+
+# do analizy korespondecji
+library(MASS)
+library(ca)
+
+```
+
+
+```{r}
+kable(housetasks)
+```
+
+Dane to tabela kontyngencji zwierająca 13 zadań domowych i ich podział w związku. Wiersze to rózne zadania. Wartości są liczebności zadań wykonywanych:
+
+- by the wife only - tylko przez żonę
+
+- alternatively - alternatywnie
+
+- by the husband only - tylko przez męża
+
+- jointly - wspólnie
+
+W naszym przypadku pierwsza zmienna (cecha $X$) ma $13 = H$ poziomów, zaś druga $4=J$ poziomy.
+
+Zamieniamy nasz zbiór w macierz.
+
+## Tablica kontyngencji
+
+```{r}
+housetasks = as.matrix(housetasks)
+```
+
+### wyświetlamy liczebności brzegowe kolumn:
+
+$$n_{\cdot j} = \sum \limits_{h=1}^{H}n_{hj}$$
+
+```{r}
+kable(colSums(housetasks))
+```
+
+### wyświetlamy liczebności brzegowe wierszy:
+
+$$n_{h \cdot} = \sum \limits_{j=1}^{J}n_{hj}$$
+
+```{r}
+kable(rowSums(housetasks))
+```
+
+```{r}
+dt <- as.table(housetasks)
+
+balloonplot(t(dt), main="Podział obowiązków",xlab="",ylab="",
+            label=FALSE, show.margins = FALSE)
+```
+
+```{r}
+kolory <- rev(brewer.pal(11,"Spectral"))
+```
+
+### Przedstawiamy macierz w postaci graficznej (za pomocą *heat mapy*)
+
+```{r}
+heatmap(housetasks,scale="col",Colv=NA, col=kolory)
+
+```
+
+KOlor czerwony odpowiada dużom liczbom, a niebieski małym.
+
+Na podstawie wykresów widzimy, że prace domowe - Laundry, Main_Meal i Dinner - częściej wykonuje "Żona". Naprawy i prowadzenie pojazdu są w przeważającej mierze wykonywane przez męża. Wakacje często kojarzone są z rubryką wspólnie.
+
+## Tablica korespondencji
+
+Na podstawie tablicy kontyngencji wyznaczana jest tablica korespondencji, czyli macierz częstości względnych $P$, zdefiniowana jako $$P = \left[\frac{n_{hj}}{n} \right]$$.
+
+```{r}
+P <- housetasks/sum(housetasks)
+kable(P)
+```
+
+## Masy kolumn i wierszy
+
+### Wyświetlamy częstości brzegowe kolumn (masy kolumn)
+
+```{r}
+kable(colSums(P))
+```
+
+### Wyświetlamy częstości brzegowe wierszy (masy wierszy)
+
+```{r}
+kable(rowSums(P))
+
+```
+
+### Wyznaczamy profile kolumn 
+$$\left[\frac{p_{hj}}{p_{\cdot j}} \right]$$
+
+```{r}
+kable(P/colSums(P))
+```
+Można też wyznaczyć korzystając z tablicy kontyngencji:
+
+$$\left[\frac{n_{hj}}{n_{\cdot j}} \right]$$.
+
+```{r}
+kable(housetasks/colSums(housetasks))
+
+```
+Widzimy, że otrzymujemy takie same wyniki
+
+### Wyznaczamy profile wierszy
+
+$$\left[\frac{p_{hj}}{p_{h \cdot}} \right]$$
+
+```{r}
+kable(P/rowSums(P))
+
+```
+
+Można też wyznaczyć korzystając z tablicy kontyngencji:
+
+$$\left[\frac{n_{hj}}{n_{h \cdot}} \right]$$.
+
+```{r}
+kable(housetasks/rowSums(housetasks))
+```
+
+Widzimy, że otrzymujemy takie same wyniki.
+
+Profile wierszy i kolumn mogą być interpretowane jako punkty w wielowymiarowej przestrzeni. Profile podobne do siebie położone będą bliżej siebie, natomiast niepodobne przedstawione jako punkty leżąće daleko od siebie.
+
+## Test $\chi^2$
+
+Badamy czy zmienne losowe są niezależne.
+
+```{r}
+chisq.test(housetasks)
+# zobaczymy czy sa zaleznosci pomiedzy kolumnami i wierszami
+```
+
+Odrzucamy hipotezę zerową o niezalezności zmiennych losowych.
+
+## Macierz różnic standaryzowanych
+
+Analiza korespondencyjna opiera się na dekompozycji macierzy różnic standaryzowanych metodą SVD. Rozkłąd ten pozwala na wyznaczenie wpółrzędnych punktów (kategorii zmiennych), co w konsekwencji pozwala na naniesienie punktów reprezentujących kategorie zmiennych nominalnych na tzw. mapę percepcji. Macierz A przedstawiamy jako:
+$$A = [a_{hj}]$$, gdzie $$a_{hj}=\frac{p_{hj}-p_{h\cdot}p_{p_{\cdot j}}}{\sqrt{p_{h\cdot}{p_{\cdot j}}}}$$
+
+```{r}
+A <- (P-outer(rowSums(P), colSums(P)))/sqrt(outer(rowSums(P), colSums(P)))
+kable(A)
+```
+
+## Analiza korespondencji z użyciem pakietu MASS
+
+```{r}
+kor1 <- corresp(housetasks, nf=2)
+biplot(kor1)
+#nf - liczba czynników, ktore mają być oblicznone
+```
+
+## Analiza korespondencyji z użyciem pakietu ca
+
+```{r}
+# argument mass powoduje, że liczebności komórek odpowiadją wielkościm punktów na wykresie
+kor2 <- ca(housetasks)
+```
+
+Analiza korespondencji jest analizą wielowymiarową wykorzystującą koncepcję analizy głóWnych składowych. Aby spraawdzić wariancję konieczne jest obliczenie wartości własnej.
+
+```{r}
+eig.val <- get_eigenvalue(kor2)
+kable(eig.val)
+```
+
+Na podstawie tabeli można stwierdzić, że dwie pierwsze składowe wyjąsniają $89\%$ zmienności danych. Tak więc wyniki analiza korespondencji całkiem dobrze wyjaśnia informacje zawarte w danych.
+
+### Rysyjemy wykres osypiska
+
+```{r}
+fviz_screeplot(kor2, addlabels = TRUE, ylim = c(0,50))
+```
+
+Na podstawie wykresu osypiska widzimy, że przy drugiej skłądowej procent zmienności, kótrą można wyjaśnic, gwałtownie spada. Wskazuje to, że trzeciej składowej nia ma dużego wpływu na wyjaśnienie danych. Tak więc wybrano dwie składowe. Całkowity procent zmienności, który można wyjaśnić dwoma wybranymi skłądowymi, wyniosi $\sim 89\%$
+
+### Mapa reprezentująca wiersze
+
+```{r}
+fviz_ca_row(kor2, col.row="steelblue", shape.row = 15)
+```
+
+współrzędne wierszy
+
+```{r}
+row <- get_ca_row(kor2)
+row$coord
+
+```
+
+$\cos^2$ dla wierszy (w dwóch wymiarach)
+
+```{r}
+row$cos2
+```
+
+```{r}
+fviz_ca_row(kor2, col.row = "cos2",
+            gradient.cols = c("#00AFBB","#E7B800","#FC4E07"),
+            repel = TRUE)
+```
+
+```{r}
+fviz_cos2(kor2, choice = "row", axes = 1:2)
+```
+
+Daje nam informacje o jakości z jaką są reprezentowane wiersze w nowym układzie. Najsłabiej reprezentowana jest `official`.
+
+#### wpółczynniki kontrybucji
+mówią o wkładzie
+
+Wpływ na pierwszą skłądową:
+
+```{r}
+row$contrib
+```
+
+```{r}
+fviz_contrib(kor2, choice = "row", axes = 1, top = 10)
+```
+
+Największy wpływ mają `Repairs`, `Laundry`, `Main_Meal` na pierwszą skladową.
+
+Wpływ na drugą składową
+
+```{r}
+fviz_contrib(kor2, choice = "row", axes = 2, top =10)
+```
+
+Największy wkłąd mają `Holidays` i `Repairs` na drugą skłądową.
+
+```{r}
+fviz_ca_row(kor2, col.row = "contrib",
+            gradient.cols = c("#00AFBB","#E7B800","#FC4E07"),
+            repel = TRUE)
+
+```
+
+Największy wkład w wyjaśnianie nowego wymiaru ma zmienna `Repairs`.
+
+### Mapa reprezentująca kolumny
+
+```{r}
+fviz_ca_col(kor2, col.col="steelblue", shape.row = 15)
+```
+
+współrzędne kolumn
+
+```{r}
+column <- get_ca_col(kor2)
+column$coord
+
+```
+
+$\cos^2$ dla wierszy (w dwóch wymiarach)
+
+```{r}
+column$cos2
+```
+
+```{r}
+fviz_ca_col(kor2, col.col = "cos2",
+            gradient.cols = c("#00AFBB","#E7B800","#FC4E07"),
+            repel = TRUE)
+```
+
+```{r}
+fviz_cos2(kor2, choice = "col", axes = 1:2)
+```
+
+Daje nam informacje o jakości z jaką są reprezentowane wiersze w nowym układzie. Najsłabiej reprezentowana jest `Alternating`.
+
+#### wpółczynniki kontrybucji
+mówią o wkładzie
+
+Wpływ kolumn na pierwszą składową:
+
+```{r}
+column$contrib
+```
+
+```{r}
+fviz_contrib(kor2, choice = "col", axes = 1, top = 10)
+```
+
+Największy wpływ mają `Husband` i `Wife` na pierwszą skladową.
+
+Wpływ na drugą składową
+
+```{r}
+fviz_contrib(kor2, choice = "col", axes = 2, top =10)
+```
+
+Największy wkłąd ma `Jointly` na drugą skłądową.
+
+```{r}
+fviz_ca_col(kor2, col.col = "contrib",
+            gradient.cols = c("#00AFBB","#E7B800","#FC4E07"),
+            repel = TRUE)
+
+```
+
+Największy wkład w wyjaśnianie nowego wymiaru ma zmienna `Husband`.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,96 @@
+"0","library(tidyverse) #ogólne"
+"2","Registered S3 methods overwritten by 'dbplyr':
+  method         from
+  print.tbl_lazy     
+  print.tbl_sql      
+"
+"2","── [1mAttaching packages[22m ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────── tidyverse 1.3.2 ──"
+"2","[32m✔[39m [34mggplot2[39m 3.4.0      [32m✔[39m [34mpurrr  [39m 1.0.0 
+[32m✔[39m [34mtibble [39m 3.1.8      [32m✔[39m [34mdplyr  [39m 1.0.10
+[32m✔[39m [34mtidyr  [39m 1.2.1      [32m✔[39m [34mstringr[39m 1.5.0 
+[32m✔[39m [34mreadr  [39m 2.1.3      [32m✔[39m [34mforcats[39m 0.5.2 "
+"2","── [1mConflicts[22m ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
+[31m✖[39m [34mdplyr[39m::[32mfilter()[39m masks [34mstats[39m::filter()
+[31m✖[39m [34mdplyr[39m::[32mlag()[39m    masks [34mstats[39m::lag()"
+"2","
+ "
+"2"," truncating string with embedded nuls
+"
+"2","2: file ‘.RData’ has magic number ''
+  Use of save versions prior to 2 is deprecated 
+"
+"0","library(ggplot2) #wykresy"
+"0","library(kableExtra) #tabelki"
+"2","
+Dołączanie pakietu: ‘kableExtra’
+
+"
+"2","Następujący obiekt został zakryty z ‘package:dplyr’:
+
+    group_rows
+
+"
+"2","Ładowanie wymaganego pakietu: foreach
+"
+"2","
+Dołączanie pakietu: ‘foreach’
+
+"
+"2","Następujące obiekty zostały zakryte z ‘package:purrr’:
+
+    accumulate, when
+
+"
+"2","Ładowanie wymaganego pakietu: parallel
+"
+"0","registerDoParallel(cores = 8)"
+"0","library(magick) #animowane wykresy"
+"2","Linking to ImageMagick 6.9.12.3
+Enabled features: cairo, freetype, fftw, ghostscript, heic, lcms, pango, raw, rsvg, webp
+Disabled features: fontconfig, x11
+"
+"0","library(ggiraph) #interaktywne wykresy"
+"0","library(ggthemes) #wykresy"
+"0","library(highcharter) #interaktywne placki"
+"2","Registered S3 method overwritten by 'quantmod':
+  method            from
+  as.zoo.data.frame zoo 
+"
+"2","Highcharts (www.highcharts.com) is a Highsoft software product which is
+"
+"2","not free for commercial and Governmental use
+"
+"0","library(forcats) #do tworzenia 'others'"
+"0","library(tidymodels) #las losowy"
+"2","[37m── [1mAttaching packages[22m ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────── tidymodels 1.0.0 ──[39m
+"
+"2","[37m[32m✔[37m [34mbroom       [37m 1.0.2     [32m✔[37m [34mrsample     [37m 1.1.1
+[32m✔[37m [34mdials       [37m 1.1.0     [32m✔[37m [34mtune        [37m 1.0.1
+[32m✔[37m [34minfer       [37m 1.0.4     [32m✔[37m [34mworkflows   [37m 1.1.2
+[32m✔[37m [34mmodeldata   [37m 1.0.1     [32m✔[37m [34mworkflowsets[37m 1.0.0
+[32m✔[37m [34mparsnip     [37m 1.0.3     [32m✔[37m [34myardstick   [37m 1.1.0
+[32m✔[37m [34mrecipes     [37m 1.0.3     [39m
+"
+"2","[37m── [1mConflicts[22m ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────── tidymodels_conflicts() ──
+[31m✖[37m [34mforeach[37m::[32maccumulate()[37m    masks [34mpurrr[37m::accumulate()
+[31m✖[37m [34mscales[37m::[32mdiscard()[37m        masks [34mpurrr[37m::discard()
+[31m✖[37m [34mdplyr[37m::[32mfilter()[37m          masks [34mstats[37m::filter()
+[31m✖[37m [34mrecipes[37m::[32mfixed()[37m         masks [34mstringr[37m::fixed()
+[31m✖[37m [34mkableExtra[37m::[32mgroup_rows()[37m masks [34mdplyr[37m::group_rows()
+[31m✖[37m [34mdplyr[37m::[32mlag()[37m             masks [34mstats[37m::lag()
+[31m✖[37m [34myardstick[37m::[32mspec()[37m        masks [34mreadr[37m::spec()
+[31m✖[37m [34mrecipes[37m::[32mstep()[37m          masks [34mstats[37m::step()
+[31m✖[37m [34mforeach[37m::[32mwhen()[37m          masks [34mpurrr[37m::when()
+[34m•[37m Use [32mtidymodels_prefer()[37m to resolve common conflicts.[39m
+"
+"0","library(textrecipes) #tuning modeli - instrukcja"
+"0","library(vip) #porownanie waznosci zmiennych w modelach"
+"2","
+Dołączanie pakietu: ‘vip’
+
+"
+"2","Następujący obiekt został zakryty z ‘package:utils’:
+
+    vi
+
+"

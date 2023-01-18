@@ -1,0 +1,2 @@
+"0","gplots::balloonplot(t(dt), main =""Gatunek x Platforma"", xlab ="""", ylab="""","
+"0","            label = FALSE, show.margins = FALSE) "

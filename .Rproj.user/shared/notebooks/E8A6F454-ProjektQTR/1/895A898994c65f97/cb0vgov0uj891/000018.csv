@@ -1,0 +1,34 @@
+"0","ggdane <- game_sales
+
+ggdane2 <- ggdane %>%
+  mutate(Sales=JP_Sales*10000000) %>%
+  select(Platform,Sales) %>%
+  aggregate(.~Platform, FUN = sum, drop = FALSE) 
+
+ggdane$Platform <- fct_collapse(ggdane$Platform, Other = as.vector(ggdane2$Platform[which(ggdane2$Sales<sum(ggdane2$Sales*0.01))]))
+
+ggdane$Sort <- c(rep(0,nrow(ggdane)))
+ggdane$Sort[which(ggdane$Platform == ""Other"")] <- 1
+
+ggdane %>%
+  mutate(Sales=JP_Sales*10000000) %>%
+  select(Platform,Sales,Sort) %>%
+  aggregate(.~Platform, FUN = sum, drop = FALSE) %>%
+  group_by(Platform) %>%
+  arrange(Sort,desc(Sales), Platform) %>%
+  ungroup() %>%
+  mutate(texto = paste0(Platform,"" "", 
+                        round(Sales/sum(Sales)*100,0),""%"")) %>%
+    hchart(""pie"", 
+           hcaes(x = texto, y = Sales),
+           name = ""Sprzedanych kopii gier w Japonii""
+    ) %>%
+    hc_title(
+      text = paste0(""Udział platform w Japonii w latach 1980-2016, łączna sprzedaż ""
+                    ,format(game_sales$JP_Sales*10000000,big.mark = "","")),#sum(game_sales$JP_Sales)*10000000),
+      align = ""left"",
+      style = list(color = ""black"", useHTML = TRUE)
+    )
+"
+"0",""
+"0","rm(list = c('ggdane','ggdane2'))"
