@@ -283,3 +283,15 @@ ggdane <- game_sales %>%
     style = list(color = "black", useHTML = TRUE)
   )
 ```
+
+
+
+
+```{r eval=FALSE, include=FALSE, echo=FALSE}
+
+game_sales %>%
+  ggstatsplot::ggnetweenstats(x = Genres, y = Global_Sales, bf.message = F)
+
+#Error in loadNamespace(j <- i[[1L]], c(lib.loc, .libPaths()), versionCheck = vI[[j]]) :
+#przestrzeń nazw ‘purrr’ 1.0.0 jest już załadowana, ale >= 1.0.1 jest wymagana
+```

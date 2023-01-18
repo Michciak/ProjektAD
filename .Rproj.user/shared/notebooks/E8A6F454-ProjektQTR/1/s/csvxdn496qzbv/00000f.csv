@@ -1,3 +1,0 @@
-"0","rownames(game_sales) <- 1:nrow(game_sales)"
-"0","game_sales <- game_sales %>%"
-"0","  mutate(Rank = rownames(game_sales))"

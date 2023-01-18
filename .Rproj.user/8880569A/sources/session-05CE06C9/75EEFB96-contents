@@ -22,6 +22,8 @@ date: "`r Sys.Date()`"
 
 ```{r notatki, eval=FALSE, include=FALSE}
 
+opracowanie: <https://www.kaggle.com/code/alimara/vg-sales-eda>
+
 1. Co jest celem badawczym, co chcemy uzysakć, co chcemy zbadać?
 2. Opis analizowanych danych, wizualizacja, podstawowe statystyki,
 - ważne jest aby skomentować dane
@@ -1020,6 +1022,15 @@ rf_fit %>%
 </details>
 
 # Analiza korespondencji
+
+```{r eval=FALSE, include=FALSE, echo=FALSE}
+
+game_sales %>%
+  ggstatsplot::ggnetweenstats(x = Genres, y = Global_Sales, bf.message = F)
+
+#Error in loadNamespace(j <- i[[1L]], c(lib.loc, .libPaths()), versionCheck = vI[[j]]) :
+#przestrzeń nazw ‘purrr’ 1.0.0 jest już załadowana, ale >= 1.0.1 jest wymagana
+```
 
 ```{r fig.width = 21, fig.height = 10, echo=FALSE, message=FALSE}
 # game_sales %>%

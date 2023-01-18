@@ -1,3 +1,0 @@
-"0","game_sales <- read.csv(""C:/Users/Michc/Dropbox/Uczelnia/Semestr 5/Projekt z analizy danych/Projekt/dane/video_games.csv"",na.strings = ""N/A"") "
-"0","game_sales <- game_sales %>%"
-"0","  `rownames<-`(NULL)"
