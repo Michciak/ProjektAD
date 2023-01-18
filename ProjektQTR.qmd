@@ -912,7 +912,7 @@ factoextra::fviz_screeplot(res.ca, addlabels = TRUE, ylim = c(0, 35)) #5 wymiar�
 factoextra::fviz_ca_biplot(res.ca, repel = TRUE)
 ```
 
-W pobliżu `Paltform` widzimi takie konsole jak `GBA`,`NES`,`Wii`,`WiiU` są to produkty Nintendo, które jest znane z gier platformowych takich jak np. *Mario* pełniących rolę gier eksluzywnych (gier na wyłączność dla danej platformy/producenta platformy). 
+W pobliżu `Paltform` widzimy takie konsole jak `GBA`,`NES`,`Wii`,`WiiU` są to produkty Nintendo, które jest znane z gier platformowych takich jak np. *Mario* pełniących rolę gier eksluzywnych (gier na wyłączność dla danej platformy/producenta platformy). 
 
 Gatunki takie jak `Fighting`, `Sports`, `Racing` znajdują się niedaleko siebie, gdyż powiązane są z tymi samymi platformami(`XB`,`XOne`,`X360`,`PS3`,`DC`,`N64`,`Gc`), które to właśnie są "domem" dla gier z tych gatunków. Konsole Microsoft'u, które są postrzegane jako najlepsze do "ogrywania" `Shooter`'ów, delikatnie "uciekają" w stronę tego gatunku, natomiast platformy Sony (`PS`,`Ps2`,`PS3`,`PS4`), które również powiązane są z w.wym. gatunkami zbliżają się do `Action`, co również ma odzwierciedlenie w opinii graczy, że to właśnie te konsole są najlepsze do takich gier.
 
